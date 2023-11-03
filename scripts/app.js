@@ -29,15 +29,6 @@
 // bomb = "alien"/"space invader"
 // weapon = player projectile
 
-// Options
-// Google Fonts
-// -Luckiest Guy
-// -Bangers
-// -Slackey
-// -Oregano
-// -Satisfy
-// -Cookie
-
 // * Elements
 
 // start button
@@ -57,6 +48,7 @@
 
 // * Executions
 
+// Use a Class for player!
 // take a hit - function/if else
 // -remove health percentage from health bar - see fundraiser project
 // -animation - add and remove classes/keyframes
@@ -97,10 +89,6 @@
 //   cell.classList.add('explosionGif')
 // }
 
-
-// player character
-// -no key or key up, stop and bobbing in place animation
-// -key down running up and down animation - keyframes
 
 // ! bombs tracking across screen towards player character (scratchy)
 // -need to keep track of all rows and columns
@@ -151,31 +139,119 @@
 // * Grid
 
 // ! set up a game grid 11H x 15W
-// -character has 2 deep but full height on the left
-// -bombs have middle of grid moving right to left and up and down
+// -character has 2 deep but full height on the left //
+// -bombs have middle of grid moving right to left and up and down /
 // -enemy character has 1 deep full height on the right
 // ----
-// const grid = document.querySelector('.grid')
-// const cells = []
-// const width = 15
-// const cellCount = width * width
-// function createGrid() {
-//   for (let i = 0; i < cellCount; i++) {
-//     const cell = document.createElement('div')
-//     // assigns numbers to all cells
-//     cell.innerText = i
-//     // means you can keep a reference later on
-//     cell.id = i
-//     // creates grid
-//     cell.style.width = `${100 / width}%`
-//     cell.style.height = `${100 / width}%`
-//     grid.append(cell)
-//     // means you can have an array to work with []
-//     cells.push(cell)
-//   }
+const grid = document.querySelector('.game-grid')
+const cells = []
+const bombs = []
+let bombCell
+// const gameCell = document.querySelectorAll('.bomb')
+const width = 16
+const height = 11
+const cellCount = width * height
+// finds middle to start with odd numbers
+const startplayerPos = Math.floor(height / 2) * width
+let currentPlayerPos = startplayerPos
+// sets amount of bombs to start game with
+const bombsHeightAmount = 9
+const bombsWidthAmount = 3
+// TODO fix to get central somehow no matter board size
+const startBombPos = bombsHeightAmount * bombsWidthAmount
+let currentBombPos = startBombPos
+
+
+function createGrid() {
+  for (let i = 0; i < cellCount; i++) {
+    const cell = document.createElement('div')
+    // assigns numbers to all cells
+    cell.innerText = i
+    // means you can keep a reference later on
+    cell.id = i
+    // creates grid
+    cell.style.width = `${100 / width}%`
+    cell.style.height = `${100 / height}%`
+    grid.append(cell)
+    // means you can have an array to work with []
+    cells.push(cell)
+  }
+  addPlayer(currentPlayerPos)
+  addBombs(currentBombPos)
+}
+createGrid()
+
+// player character
+// -no key or key up, stop and bobbing in place animation
+// -key down running up and down animation - keyframes
+
+// add player
+function addPlayer() {
+  cells[currentPlayerPos].classList.add('player')
+}
+// stops player repeating on move
+function removePlayer() {
+  cells[currentPlayerPos].classList.remove('player')
+}
+
+//add one bomb
+// function addBombs() {
+//   cells[currentBombPos].classList.add('bomb')
+//   cells[currentBombPos + width].classList.add('bomb')
 // }
-//// on page load
-// createGrid()
+
+// add all bombs
+
+function addBombs() {
+  for (let i = currentBombPos; i < width * bombsHeightAmount + startBombPos; i++) {
+    // TODO tidy up
+    if ((i % width === width - 2) || (i % width === width - 3) || (i % width === width - 4)) {
+      // if () {
+      
+      bombCell = cells[i]
+      bombCell.classList.add('bomb')  
+      bombs.push(bombCell)    
+    }
+  }
+}
+
+// width - (bombsWidthAmount + 1) to allow for extra row / then to nextElementSibling, repeat bombsWidth amount times - 1, then skip by 'width' amount and repeat
+// ((height - bombsHeightAmount) / 2) + to attempt at center
+
+function removeBombs() {
+  for (let i = 0; i < cellCount; i++) {
+    bombCell = cells[i]
+    bombCell.classList.remove('bomb')
+  }
+}
+
+// console.log((bombs[0].nextElementSibling.innerHTML))
+
+bombs.forEach(function(bomb) {
+  if (bomb.classList.contains('bomb') === true) {
+    currentBombPos -= width
+    // console.log(bomb.id)
+  }
+  addBombs()
+})
+
+function keyPress(event) {
+  const key = event.code
+  removePlayer()
+  // stop scratchy going up off the page
+  if (key === 'ArrowUp' && currentPlayerPos >= width) {
+    currentPlayerPos -= width
+  } else if (key === 'ArrowDown' && currentPlayerPos + width < cells.length) {
+    currentPlayerPos += width
+  } else if (key === 'ArrowLeft' && currentPlayerPos % width !== 0) {
+    currentPlayerPos--
+  } else if (key === 'ArrowRight' && currentPlayerPos % width !== (width - width + 1)){
+    currentPlayerPos++
+  }
+  addPlayer()
+}
+
+
 
 // * Events
 
@@ -202,6 +278,7 @@
 // keypress events
 // -space bar to fire
 // -up, down, left, right
+document.addEventListener('keyup', keyPress)
 
 // instructions button
 // -same as pause button
@@ -210,6 +287,7 @@
 // * Page Load
 
 // create grid
+
 // ! local storage high scores - nice to have
 // intro to game modal - window event
 // favicon
@@ -220,4 +298,3 @@
 
 // Welcome to the Itchy and Scratchy Battle Royale
 // The aim of the game is to destroy as much as Itchy can throw at you before you become Poochie chow
-// 
