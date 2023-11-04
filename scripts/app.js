@@ -92,7 +92,7 @@
 
 // ! bombs tracking across screen towards player character (scratchy)
 // -need to keep track of all rows and columns
-// --add class to cell when bomb present
+// --add class to cell when bomb present /
 // --when bomb removed add 'deadbomb' class to keep space
 // ! --when a bomb/many bombs (contains class) at top or bottom of column connect with border, move left towards player
 // --will have it's own set interval speed
@@ -160,7 +160,7 @@ const bombsWidthAmount = 3
 // TODO fix to get central somehow no matter board size
 const startBombPos = bombsHeightAmount * bombsWidthAmount
 let currentBombPos = startBombPos
-
+let currentWeaponPos = startplayerPos
 
 function createGrid() {
   for (let i = 0; i < cellCount; i++) {
@@ -178,6 +178,7 @@ function createGrid() {
   }
   addPlayer(currentPlayerPos)
   addBombs(currentBombPos)
+  addWeapon(currentWeaponPos)
 }
 createGrid()
 
@@ -193,63 +194,122 @@ function addPlayer() {
 function removePlayer() {
   cells[currentPlayerPos].classList.remove('player')
 }
+//add weapon to sccreen on firing
+function addWeapon(position) {
+  cells[position].classList.add('weapon')
+}
+// stops weapon repeating on move
+function removeWeapon() {
+  cells[currentWeaponPos].classList.remove('weapon')
+}
 
 //add one bomb
 // function addBombs() {
 //   cells[currentBombPos].classList.add('bomb')
 //   cells[currentBombPos + width].classList.add('bomb')
 // }
-
 // add all bombs
-
-function addBombs() {
-  for (let i = currentBombPos; i < width * bombsHeightAmount + startBombPos; i++) {
-    // TODO tidy up
-    if ((i % width === width - 2) || (i % width === width - 3) || (i % width === width - 4)) {
-      // if () {
-      
-      bombCell = cells[i]
-      bombCell.classList.add('bomb')  
-      bombs.push(bombCell)    
-    }
+function addBombs(currentBombPos) {
+  for (let i = currentBombPos; i <= bombsHeightAmount * width + width; i += width) {    
+    bombCell = cells[i]
+    bombCell.classList.add('bomb')  
+    bombs.push(bombCell)
+  }
+  for (let i = currentBombPos + 1; i < bombsHeightAmount * width + width; i += width) {    
+    bombCell = cells[i]
+    bombCell.classList.add('bomb')  
+    bombs.push(bombCell)
+  }
+  for (let i = currentBombPos + 2; i < bombsHeightAmount * width + width; i += width) {    
+    bombCell = cells[i]
+    bombCell.classList.add('bomb')  
+    bombs.push(bombCell)
   }
 }
 
-// width - (bombsWidthAmount + 1) to allow for extra row / then to nextElementSibling, repeat bombsWidth amount times - 1, then skip by 'width' amount and repeat
-// ((height - bombsHeightAmount) / 2) + to attempt at center
 
 function removeBombs() {
   for (let i = 0; i < cellCount; i++) {
     bombCell = cells[i]
-    bombCell.classList.remove('bomb')
+    if (bombCell.classList.contains('bomb')) {
+      bombCell.classList.remove('bomb') || bombCell.classList.remove('deadBomb')
+    }
+  
   }
 }
 
-// console.log((bombs[0].nextElementSibling.innerHTML))
+// moving bombs up
+// function moveBomb() {
+//   bombs.forEach(function(bomb) {
+//     removeBombs()
+//     if (bomb.classList.contains('bomb') === true && bomb === currentBombPos) {
 
-bombs.forEach(function(bomb) {
-  if (bomb.classList.contains('bomb') === true) {
-    currentBombPos -= width
-    // console.log(bomb.id)
-  }
-  addBombs()
-})
+//       currentBombPos = currentBombPos -= width
+//     }
+//     addBombs(currentBombPos - width)
+//   })
+// }
+// moveBomb()
 
-function keyPress(event) {
+
+function controlPlayer(event) {
   const key = event.code
   removePlayer()
+  removeWeapon()
   // stop scratchy going up off the page
   if (key === 'ArrowUp' && currentPlayerPos >= width) {
     currentPlayerPos -= width
+    currentWeaponPos -= width
   } else if (key === 'ArrowDown' && currentPlayerPos + width < cells.length) {
     currentPlayerPos += width
+    currentWeaponPos += width
   } else if (key === 'ArrowLeft' && currentPlayerPos % width !== 0) {
     currentPlayerPos--
+    currentWeaponPos--
   } else if (key === 'ArrowRight' && currentPlayerPos % width !== (width - width + 1)){
     currentPlayerPos++
+    currentWeaponPos++
   }
   addPlayer()
 }
+
+function findLaunchPoint(event) {
+  const fire = event.code
+  let launchPoint
+  if (fire === 'Space') {
+    launchPoint = Number(cells[currentWeaponPos].id)
+    startWeaponTrajectory(launchPoint)
+  }
+}
+let countAcross
+function startWeaponTrajectory(launchPoint) {
+  countAcross = setInterval(() => {
+    explosion()
+    launchPoint++
+    //remove trajectory
+    cells[launchPoint].previousSibling.classList.remove('weapon')
+    addWeapon(launchPoint)
+    // ! fix weapon stopping at end of row
+    if (launchPoint === currentWeaponPos + width - 1) {
+      cells[launchPoint].classList.remove('weapon')
+      console.log('end of the line')
+      clearInterval(countAcross)
+    }
+  }, 400)
+}
+
+function explosion() {
+  const explodeCell = document.querySelectorAll('.bomb')
+  explodeCell.forEach(cell => {
+    // console.log(cell)
+    if (cell.classList.contains('bomb') && cell.classList.contains('weapon')) {
+      // return cell
+      cell.classList.add('kaboom').remove('bomb').remove('weapon').add('deadBomb')
+    }
+  })
+}
+
+
 
 
 
@@ -275,10 +335,11 @@ function keyPress(event) {
 // restart button
 // -same functions as start button.
 
-// keypress events
+// key press events
 // -space bar to fire
 // -up, down, left, right
-document.addEventListener('keyup', keyPress)
+document.addEventListener('keyup', controlPlayer)
+document.addEventListener('keyup', findLaunchPoint)
 
 // instructions button
 // -same as pause button

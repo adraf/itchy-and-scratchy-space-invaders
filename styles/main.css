@@ -42,18 +42,28 @@ body {
 .game-grid div {
   border: 1px solid lightgrey;
   display: inline-block;
-}
-
-.game-grid div.player {
   background-repeat: no-repeat;
   background-size: contain;
   background-position: center;
+}
+
+.game-grid div.player {
   background-image: url('../assets/scratchy.png')
 }
 
 .game-grid div.bomb {
-  background-repeat: no-repeat;
-  background-size: contain;
-  background-position: center;
   background-image: url('../assets/bomb.png');
+}
+
+.game-grid div.weapon {
+  background-image: url('../assets/mallet.png');
+}
+
+.game-grid div.kaboom {
+  background-image: url('../assets/kaboom.gif');
+  animation: disappear 0s linear 1s forwards;
+}
+
+@keyframes disappear {
+  to {opacity:0;}
 }
