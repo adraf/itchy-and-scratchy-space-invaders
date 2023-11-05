@@ -1,9 +1,9 @@
 // * Timeline
 // Monday - basic game mechanics
 // -bombs 'aliens' move
-// --can connect with a weapon
-// --can be removed
-// -can move player character
+// --can connect with a weapon /
+// --can be removed /
+// -can move player character /
 // -points occur
 // -can take hits
 // -can log loss of % to life
@@ -25,7 +25,7 @@
 // -key frame animations
 // -nice to have's of enemy character
 
-// * Key
+// * Key Terms
 // bomb = "alien"/"space invader"
 // weapon = player projectile
 
@@ -38,10 +38,10 @@
 // points 
 // instructions button
 
-// weapons
-// character
+// weapons /
+// character /
 // enemy character
-// bombs
+// bombs /
 
 // * Variables
 
@@ -55,12 +55,12 @@
 // --~character degredation past milestone percentages
 
 // land a hit
-// -remove bomb replace class with deadbomb to keep formation
-// -animation - keyframes/gif placeholder for MVP
-// --~add weapon progress
+// -remove bomb replace class with deadbomb to keep formation /
+// -animation - keyframes/gif placeholder for MVP /
+// --~add weapon progress to progress bar for power ups
 
 // fire (throw weapon)
-// -on keyup of space bar
+// -on keyup of space bar /
 // -animation of weapon (mallet) with css keyframes (on key down? maybe not - try and see)
 // ----
 // weapon {
@@ -79,9 +79,9 @@
 // }
 // ----
 // ! track progress across row (cell.row?)
-// --currentpos to cell row length unless (if) bomb and weapon in same class (else) then blow bomb up and replace with 'deadbomb' class
-// -weapon will have quicker setInterval to track across screen quicker
-// -if bomb and weapon are in same classList then remove bomb
+// --currentpos to cell row length unless (if) bomb and weapon in same class (else) then blow bomb up and replace with 'deadbomb' class /
+// -weapon will have quicker setInterval to track across screen quicker /
+// -if bomb and weapon are in same classList then remove bomb /
 // -multiple weapons can be flying.
 // ----
 // if (cell.classList.contains('enemy' && 'weapon')) {
@@ -93,7 +93,7 @@
 // ! bombs tracking across screen towards player character (scratchy)
 // -need to keep track of all rows and columns
 // --add class to cell when bomb present /
-// --when bomb removed add 'deadbomb' class to keep space
+// --when bomb removed add 'deadbomb' class to keep space /
 // ! --when a bomb/many bombs (contains class) at top or bottom of column connect with border, move left towards player
 // --will have it's own set interval speed
 // -- have end point to set off game over
@@ -178,7 +178,8 @@ function createGrid() {
   }
   addPlayer(currentPlayerPos)
   addBombs(currentBombPos)
-  addWeapon(currentWeaponPos)
+  // don't need, otherwise it overwrites player
+  // addWeapon(currentWeaponPos)
 }
 createGrid()
 
@@ -198,10 +199,11 @@ function removePlayer() {
 function addWeapon(position) {
   cells[position].classList.add('weapon')
 }
-// stops weapon repeating on move
-function removeWeapon() {
-  cells[currentWeaponPos].classList.remove('weapon')
+// removes weapon/stops weapon repeating on move
+function removeWeapon(position) {
+  cells[position].classList.remove('weapon')
 }
+
 
 //add one bomb
 // function addBombs() {
@@ -209,26 +211,30 @@ function removeWeapon() {
 //   cells[currentBombPos + width].classList.add('bomb')
 // }
 // add all bombs
-function addBombs(currentBombPos) {
-  for (let i = currentBombPos; i <= bombsHeightAmount * width + width; i += width) {    
+
+// calculates row number to add on to set amount of rows
+function addBombs(position) {
+  const bombsAllowedCells = (bombsHeightAmount * width) + ((Math.ceil(position / width)) * width) - width
+
+  for (let i = position; i <= bombsAllowedCells; i += width) {    
     bombCell = cells[i]
     bombCell.classList.add('bomb')  
     bombs.push(bombCell)
   }
-  for (let i = currentBombPos + 1; i < bombsHeightAmount * width + width; i += width) {    
+  for (let i = position + 1; i < bombsAllowedCells; i += width) {    
     bombCell = cells[i]
     bombCell.classList.add('bomb')  
     bombs.push(bombCell)
   }
-  for (let i = currentBombPos + 2; i < bombsHeightAmount * width + width; i += width) {    
+  for (let i = position + 2; i < bombsAllowedCells; i += width) {    
     bombCell = cells[i]
     bombCell.classList.add('bomb')  
     bombs.push(bombCell)
   }
 }
 
-
-function removeBombs() {
+// ? to go with moving function
+function removeBombs(position) {
   for (let i = 0; i < cellCount; i++) {
     bombCell = cells[i]
     if (bombCell.classList.contains('bomb')) {
@@ -238,24 +244,48 @@ function removeBombs() {
   }
 }
 
-// moving bombs up
-// function moveBomb() {
-//   bombs.forEach(function(bomb) {
-//     removeBombs()
-//     if (bomb.classList.contains('bomb') === true && bomb === currentBombPos) {
-
-//       currentBombPos = currentBombPos -= width
-//     }
-//     addBombs(currentBombPos - width)
-//   })
+// ! to automate for bomb in SetInterval
+// * works
+// moving bombs down
+// function moveBombDown() {
+//   removeBombs(currentBombPos)
+//   const bombsDown = currentBombPos + width
+//   // console.log(bombsDown)
+//   addBombs(bombsDown)
 // }
-// moveBomb()
+// moveBombDown()
+
+// * works
+// moving bombs up
+function moveBomb() {
+  removeBombs(currentBombPos)
+  const bombsUp = currentBombPos - width
+  if (currentBombPos < 0) {
+    currentBombPos -= width
+    console.log('stopped')
+  } else {
+    addBombs(bombsUp)
+  }
+}
+moveBomb()
+
+
+
+
+// * works
+// moving bombs toward player - left
+// function moveBombLeft() {
+//   removeBombs(currentBombPos)
+//   const bombsLeft = currentBombPos - 1
+//   addBombs(bombsLeft)
+// }
+// moveBombLeft()
 
 
 function controlPlayer(event) {
   const key = event.code
   removePlayer()
-  removeWeapon()
+  removeWeapon(currentWeaponPos)
   // stop scratchy going up off the page
   if (key === 'ArrowUp' && currentPlayerPos >= width) {
     currentPlayerPos -= width
@@ -263,16 +293,18 @@ function controlPlayer(event) {
   } else if (key === 'ArrowDown' && currentPlayerPos + width < cells.length) {
     currentPlayerPos += width
     currentWeaponPos += width
-  } else if (key === 'ArrowLeft' && currentPlayerPos % width !== 0) {
-    currentPlayerPos--
-    currentWeaponPos--
-  } else if (key === 'ArrowRight' && currentPlayerPos % width !== (width - width + 1)){
-    currentPlayerPos++
-    currentWeaponPos++
+  // * decided to keep to 1 deep for player
+    // } else if (key === 'ArrowLeft' && currentPlayerPos % width !== 0) {
+    //   currentPlayerPos--
+    //   currentWeaponPos--
+    // } else if (key === 'ArrowRight' && currentPlayerPos % width !== (width - width)){
+    //   currentPlayerPos++
+    //   currentWeaponPos++
   }
   addPlayer()
 }
 
+// ! launching multiple weapons breaks setInterval trajectory
 function findLaunchPoint(event) {
   const fire = event.code
   let launchPoint
@@ -284,32 +316,29 @@ function findLaunchPoint(event) {
 let countAcross
 function startWeaponTrajectory(launchPoint) {
   countAcross = setInterval(() => {
-    explosion()
     launchPoint++
     //remove trajectory
     cells[launchPoint].previousSibling.classList.remove('weapon')
     addWeapon(launchPoint)
-    // ! fix weapon stopping at end of row
+    explosion(launchPoint)
     if (launchPoint === currentWeaponPos + width - 1) {
-      cells[launchPoint].classList.remove('weapon')
-      console.log('end of the line')
       clearInterval(countAcross)
+      removeWeapon(launchPoint)
+      console.log('end of the line')
     }
   }, 400)
 }
 
-function explosion() {
-  const explodeCell = document.querySelectorAll('.bomb')
-  explodeCell.forEach(cell => {
-    // console.log(cell)
-    if (cell.classList.contains('bomb') && cell.classList.contains('weapon')) {
-      // return cell
-      cell.classList.add('kaboom').remove('bomb').remove('weapon').add('deadBomb')
-    }
-  })
+// blows up bombs andremoves/assigns classes to cells
+function explosion(launchPoint) {
+  if (cells[launchPoint].classList.contains('bomb') && cells[launchPoint].classList.contains('weapon')) {
+    clearInterval(countAcross)
+    cells[launchPoint].classList.add('kaboom')
+    cells[launchPoint].classList.add('deadBomb')
+    cells[launchPoint].classList.remove('bomb')
+    removeWeapon(launchPoint)
+  }
 }
-
-
 
 
 

@@ -36,7 +36,7 @@ body {
 .game-grid {
   box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2);
   height: 440px;
-  width: 800px;
+  width: 600px;
 }
 
 .game-grid div {
@@ -53,10 +53,28 @@ body {
 
 .game-grid div.bomb {
   background-image: url('../assets/bomb.png');
+  background-size: 50%;
+  /* animation-name: spin;
+  animation-duration: 4000ms;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear; */
 }
 
 .game-grid div.weapon {
   background-image: url('../assets/mallet.png');
+  animation-name: spin;
+  animation-duration: 400ms;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
+}
+
+@keyframes spin {
+  from {
+      transform:rotate(0deg);
+  }
+  to {
+      transform:rotate(360deg);
+  }
 }
 
 .game-grid div.kaboom {
