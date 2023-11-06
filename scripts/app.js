@@ -4,7 +4,7 @@
 // --can connect with a weapon /
 // --can be removed /
 // -can move player character /
-// -points occur
+// -points occur /
 // -can take hits
 // -can log loss of % to life
 // -start button
@@ -51,7 +51,7 @@
 // Use a Class for player!
 // take a hit - function/if else
 // -remove health percentage from health bar - see fundraiser project
-// -animation - add and remove classes/keyframes
+// -animation - add and remove classes/keyframes 
 // --~character degredation past milestone percentages
 
 // land a hit
@@ -145,7 +145,7 @@
 // ----
 const grid = document.querySelector('.game-grid')
 const cells = []
-const bombs = []
+let bombs = []
 let bombCell
 // const gameCell = document.querySelectorAll('.bomb')
 const width = 16
@@ -154,6 +154,8 @@ const cellCount = width * height
 // finds middle to start with odd numbers
 const startplayerPos = Math.floor(height / 2) * width
 let currentPlayerPos = startplayerPos
+const startEnemyPos = 95
+let currentEnemyPos = startEnemyPos
 // sets amount of bombs to start game with
 const bombsHeightAmount = 9
 const bombsWidthAmount = 3
@@ -161,6 +163,7 @@ const bombsWidthAmount = 3
 const startBombPos = bombsHeightAmount * bombsWidthAmount
 let currentBombPos = startBombPos
 let currentWeaponPos = startplayerPos
+const pointsCounter = document.querySelector('#points-readout')
 
 function createGrid() {
   for (let i = 0; i < cellCount; i++) {
@@ -178,14 +181,15 @@ function createGrid() {
   }
   addPlayer(currentPlayerPos)
   addBombs(currentBombPos)
+  addEnemy(currentEnemyPos)
   // don't need, otherwise it overwrites player
   // addWeapon(currentWeaponPos)
 }
 createGrid()
 
 // player character
-// -no key or key up, stop and bobbing in place animation
-// -key down running up and down animation - keyframes
+// -on key or key up, stop and bobbing in place animation /
+// -key down running up and down animation /
 
 // add player
 function addPlayer() {
@@ -195,7 +199,7 @@ function addPlayer() {
 function removePlayer() {
   cells[currentPlayerPos].classList.remove('player')
 }
-//add weapon to sccreen on firing
+//add weapon to screen on firing
 function addWeapon(position) {
   cells[position].classList.add('weapon')
 }
@@ -203,7 +207,21 @@ function addWeapon(position) {
 function removeWeapon(position) {
   cells[position].classList.remove('weapon')
 }
+// adds in player running gif
+function addPlayerRun() {
+  cells[currentPlayerPos].classList.add('playerRun')
+}
+//removes player running gif
+function removePlayerRun() {
+  cells[currentPlayerPos].classList.remove('playerRun')
+}
 
+function addEnemy() {
+  cells[currentEnemyPos].classList.add('enemy')
+}
+function removeEnemyRun() {
+  cells[currentEnemyPos].classList.remove('enemy')
+}
 
 //add one bomb
 // function addBombs() {
@@ -216,12 +234,7 @@ function removeWeapon(position) {
 function addBombs(position) {
   const bombsAllowedCells = (bombsHeightAmount * width) + ((Math.ceil(position / width)) * width) - width
 
-  for (let i = position; i <= bombsAllowedCells; i += width) {    
-    bombCell = cells[i]
-    bombCell.classList.add('bomb')  
-    bombs.push(bombCell)
-  }
-  for (let i = position + 1; i < bombsAllowedCells; i += width) {    
+  for (let i = position + 1; i <= bombsAllowedCells; i += width) {    
     bombCell = cells[i]
     bombCell.classList.add('bomb')  
     bombs.push(bombCell)
@@ -231,66 +244,108 @@ function addBombs(position) {
     bombCell.classList.add('bomb')  
     bombs.push(bombCell)
   }
-}
-
-// ? to go with moving function
-function removeBombs(position) {
-  for (let i = 0; i < cellCount; i++) {
+  for (let i = position + 3; i < bombsAllowedCells; i += width) {    
     bombCell = cells[i]
-    if (bombCell.classList.contains('bomb')) {
-      bombCell.classList.remove('bomb') || bombCell.classList.remove('deadBomb')
-    }
-  
+    bombCell.classList.add('bomb')  
+    bombs.push(bombCell)
   }
 }
+
+// fetches each bomb and dead bomb, return class name and position number
+let bombGroup = []
+function returnBombs() {
+  const allLiveBombs = document.querySelectorAll('.bomb')
+  const allDeadBombs = document.querySelectorAll('.deadBomb')
+  allLiveBombs.forEach(bomb => {
+    bombGroup.push(bomb)
+  })  
+  allDeadBombs.forEach(bomb => {
+    bombGroup.push(bomb)
+  })
+}
+returnBombs()
+// cells[12].classList.add('bomb')
+
+// to go with moving function, removes bombs from cells after moving
+function removeBombs() {
+  for (let i = 0; i < cells.length; i++) {
+    bombCell = cells[i]
+    if (bombCell.classList.contains('bomb') || bombCell.classList.contains('deadBomb')) {
+      bombCell.classList.remove('bomb') || bombCell.classList.remove('deadBomb')
+    }
+  }
+}
+
 
 // ! to automate for bomb in SetInterval
 // * works
 // moving bombs down
-// function moveBombDown() {
-//   removeBombs(currentBombPos)
-//   const bombsDown = currentBombPos + width
-//   // console.log(bombsDown)
-//   addBombs(bombsDown)
-// }
-// moveBombDown()
-
-// * works
-// moving bombs up
-function moveBomb() {
+function moveBombDown() {
   removeBombs(currentBombPos)
-  const bombsUp = currentBombPos - width
-  if (currentBombPos < 0) {
-    currentBombPos -= width
-    console.log('stopped')
-  } else {
-    addBombs(bombsUp)
-  }
+  currentBombPos = currentBombPos + width
+  addBombs(currentBombPos)
 }
-moveBomb()
+// // moveBombDown()
 
-
-
-
-// * works
-// moving bombs toward player - left
-// function moveBombLeft() {
+// // * works
+// // moving bombs up
+// function moveBombUp() {
 //   removeBombs(currentBombPos)
-//   const bombsLeft = currentBombPos - 1
-//   addBombs(bombsLeft)
+//   currentBombPos = currentBombPos - width
+//   addBombs(currentBombPos)
 // }
-// moveBombLeft()
+// moveBombUp()
+
+// function moveBombUp() {
+//   for (let i = 0; i < cells.length; i++) {
+//     bombCell = cells[i]
+//     if (bombCell.classList.contains('bomb') || bombCell.classList.contains('deadBomb')) {
+//       console.log(cell[0])
+//       bombCell - width.classList.remove('bomb')
+//       bombCell - width.classList.add('bomb')
+//     }
+//   }
+//   console.log(bombCell)
+// }
+
+
+// // * works
+// // moving bombs toward player - left
+function moveBombLeft() {
+  for (let i = 0; i < cells.length; i++) {
+    bombCell = cells[i]
+    if (bombCell.classList.contains('bomb') || bombCell.classList.contains('deadBomb')) {
+      // console.log(cells[i].id)
+      bombCell.nextElementSibling.classList.remove('bomb')
+      bombCell.previousSibling.classList.add('bomb')
+    }
+  }
+  // console.log(cells)
+}
+
+  
+
+// let bombMovement
+// function bombAnimation() {
+//   bombMovement = setInterval(() => {
+//     moveBombUp()
+
+//   }, 500)
+// }
+// bombAnimation()
+
 
 
 function controlPlayer(event) {
   const key = event.code
+  removePlayerRun()
   removePlayer()
   removeWeapon(currentWeaponPos)
   // stop scratchy going up off the page
   if (key === 'ArrowUp' && currentPlayerPos >= width) {
     currentPlayerPos -= width
     currentWeaponPos -= width
-  } else if (key === 'ArrowDown' && currentPlayerPos + width < cells.length) {
+  } else if (key === 'ArrowDown' && currentPlayerPos >= width) {
     currentPlayerPos += width
     currentWeaponPos += width
   // * decided to keep to 1 deep for player
@@ -302,6 +357,20 @@ function controlPlayer(event) {
     //   currentWeaponPos++
   }
   addPlayer()
+}
+
+// player runs on key down, then stops on key up - some functionality filters into addPlayer function
+function playerRun(event) {
+  const key = event.code
+  removePlayer()
+  addPlayerRun()
+  // ! key down is currently any key
+  // stop scratchy going up off the page
+  if (key === 'ArrowUp' && currentPlayerPos >= width) {
+    currentPlayerPos
+  } else if (key === 'ArrowDown' && currentPlayerPos + width < cells.length) {
+    currentPlayerPos
+  }
 }
 
 // ! launching multiple weapons breaks setInterval trajectory
@@ -326,7 +395,7 @@ function startWeaponTrajectory(launchPoint) {
       removeWeapon(launchPoint)
       console.log('end of the line')
     }
-  }, 400)
+  }, 300)
 }
 
 // blows up bombs andremoves/assigns classes to cells
@@ -336,10 +405,27 @@ function explosion(launchPoint) {
     cells[launchPoint].classList.add('kaboom')
     cells[launchPoint].classList.add('deadBomb')
     cells[launchPoint].classList.remove('bomb')
+    pointsCounter.innerText = Number(pointsCounter.innerText) + 20
     removeWeapon(launchPoint)
+    // removes explosion gif after 1 second
+    setTimeout(function() {
+      cells[launchPoint].classList.remove('kaboom')
+    }, 1000)
   }
 }
 
+let runTime
+function randomEnemyRun() {
+  const runNumber = Math.floor(Math.random() * height)
+  runTime = setTimeout(() => {
+    if (currentEnemyPos >= width) {
+      currentEnemyPos - (width * runNumber)
+    } else if (currentEnemyPos >= width) {
+      currentEnemyPos + (width * runNumber)
+    }
+  }, 400)
+}
+randomEnemyRun()
 
 
 // * Events
@@ -369,6 +455,7 @@ function explosion(launchPoint) {
 // -up, down, left, right
 document.addEventListener('keyup', controlPlayer)
 document.addEventListener('keyup', findLaunchPoint)
+document.addEventListener('keydown', playerRun)
 
 // instructions button
 // -same as pause button
