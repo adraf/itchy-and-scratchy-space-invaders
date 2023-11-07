@@ -5,6 +5,17 @@
 -Oregano
 -Satisfy
 -Cookie */
+/* font-family: 'Luckiest Guy', cursive; */
+/* font-family: 'Oregano', cursive; */
+
+:root {
+  --yellow: #fed439;
+  --red: #C80813FF;
+  --dark-red: rgb(148, 4, 11);
+  --light-red: rgb(232, 4, 16);
+  --pink: #FD8CC1FF;
+  --purple: #370335FF;
+}
 
 * {
   box-sizing: border-box;
@@ -12,12 +23,15 @@
 
 html {
   font-size: 16px;
+  font-family: 'Luckiest Guy', cursive;
+  letter-spacing: 1.5px;
 }
 
 body {
   margin: 0;
   height: 100vh;
   width: 100vw;
+  background-color: var(--yellow);
 }
 
 /* ! use var for colors */
@@ -34,19 +48,19 @@ body {
   justify-content: center;
   align-items: center; */
   position: absolute;
-  bottom: 2em;
+  bottom: 1em;
   left: 50%;
   transform: translate(-50%);
 }
 
 .game-grid {
   /* box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2); */
-  height: 440px;
-  width: 600px;
+  height: 484px;
+  width: 660px;
 }
 
 .game-grid div {
-  /* border: 1px solid lightgrey; */
+  border: 1px solid lightgrey;
   display: inline-block;
   background-repeat: no-repeat;
   background-size: contain;
@@ -55,11 +69,12 @@ body {
 
 .game-grid div.player {
   background-image: url('../assets/Scratchy_Stood_blink_gif.gif');
-  background-size: 200%;
+  background-size: 70%;
 }
 
 .game-grid div.playerRun {
   background-image: url('../assets/Scratchy_run_gif.gif');
+  background-size: 130%; 
 }
 
 .game-grid div.bomb {
@@ -73,10 +88,12 @@ body {
 
 .game-grid div.weapon {
   background-image: url('../assets/mallet.png');
+  background-size: 60%;
   animation-name: spin;
   animation-duration: 300ms;
   animation-iteration-count: infinite;
   animation-timing-function: linear;
+
 }
 
 @keyframes spin {
@@ -95,14 +112,30 @@ body {
 .game-grid div.enemy {
   background-image: url('../assets/Itchy_run_gif.gif');
   /* ! to fix */
-  background-size: 400%;
-  background-position: 50% 70%;
+  background-size: 60%;
+  background-position: 50% 80%;
+}
+
+header {
+  height: 20vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-evenly;
 }
 
 h1 {
   text-align: center;
   margin: 0;
-  padding: 20px
+  text-transform: uppercase;
+  color: var(--purple);
+  display: flex;
+  align-items: center;
+}
+
+.smallItalics {
+  font-family: 'Oregano', cursive;
+  font-size: 0.5em;
 }
 
 .top-controls-container {
@@ -125,46 +158,83 @@ h1 {
 }
 
 #health-container {
-  background-color: coral;
+  background-color: white;
   width: 8em;
   height: 1.5em;
   border-radius: 0.2em;
+  display: flex;
+}
+
+#health-bar {
+  flex-basis: 100%;
+  background-color: var(--pink);
+  border-radius: 0.2em 0 0 0.2em;
+  transition: flex-basis 2s ease-in-out;
+}
+
+#health-bar-total {
+  flex-grow: 1;
+  background-color: white;
+  border-radius: 0 0.2em 0.2em 0;
 }
 
 #points-container {
-  background-color: coral;
+  background-color: white;
   width: 4em;
   height: 1.5em;
   border-radius: 0.2em;
 }
 
 #points-readout {
+  height: inherit;
+  width: 4em;
+  color: var(--red);
   display: flex;
-  height: 1.5em;
   align-items: center;
   justify-content: center;
-  color: white;
+  padding-top: 4px;
 }
 
 .playBtn {
   border: none;
-  background-color: red;
+  background-color: var(--red);
   border-radius: 4em;
-  height: 4em;
-  width: 4em;
+  height: 4.75em;
+  width: 4.75em;
   color: white;
+  font-family: inherit;
+  cursor: pointer;
+  text-decoration: none;
+  text-align: center;
+  box-shadow: 3px 3px var(--dark-red);
+}
+
+.playBtn:hover{
+  background-color: var(--light-red);
+}
+
+.playBtn:active {
+  background-color: var(--dark-red);
+  box-shadow: 0 0px #666;
+  transform: translate(3px, 3px);
 }
 
 #burger-menu-btn {
   height: 3.5em;
+  cursor: pointer;
 }
 
 #background-image-container {
   height: 80vh;
   width: 100vw;
+  max-width: 1090px;
   background-image: url('../assets/springfiled_background.png');
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: top;
   position: absolute;
   bottom: 0;
   left: 50%;
   transform: translate(-50%);
 }
+

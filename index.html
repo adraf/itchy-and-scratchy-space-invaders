@@ -6,6 +6,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="styles/main.css">
   <script defer src="scripts/app.js" charset="utf-8"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&family=Oregano:ital@0;1&display=swap" rel="stylesheet">
 </head>
 <body>
   <!-- https://www.w3schools.com/howto/howto_css_modals.asp -->
@@ -26,7 +29,7 @@
   </div>
   <!-- controls section -->
   <header>
-    <h1>The Itchy and Scratchy Show</h1>
+    <h1><span class="smallItalics">The</span>&nbsp;Itchy & Scratchy&nbsp;<span class="smallItalics">Show</span></h1>
     <section class="top-controls-container">
       <div id="buttons-container">
         <!-- <button class="playBtn" id="pauseBtn">Pause</button> -->
@@ -34,6 +37,7 @@
       </div>
       <div id="health-container">
         <div id="health-bar"></div>
+        <div id="health-bar-total"></div>
       </div>
       <div id="points-container">
         <div id="points-readout">0</div>

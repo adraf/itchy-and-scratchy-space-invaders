@@ -14,7 +14,7 @@
 // -reset buttons
 // -pause buttons
 // -can log health to bar
-// -can log points to points
+// -can log points to points /
 
 // Wednesday - modals
 // -start modal
@@ -22,7 +22,7 @@
 // -side (krusty) burger menu for pause
 
 // Thursday - animation
-// -key frame animations
+// -key frame animations /
 // -nice to have's of enemy character
 
 // * Key Terms
@@ -50,7 +50,7 @@
 
 // Use a Class for player!
 // take a hit - function/if else
-// -remove health percentage from health bar - see fundraiser project
+// -remove health percentage from health bar - see fundraiser project 
 // -animation - add and remove classes/keyframes 
 // --~character degredation past milestone percentages
 
@@ -145,9 +145,6 @@
 // ----
 const grid = document.querySelector('.game-grid')
 const cells = []
-let bombs = []
-let bombCell
-// const gameCell = document.querySelectorAll('.bomb')
 const width = 16
 const height = 11
 const cellCount = width * height
@@ -159,11 +156,29 @@ let currentEnemyPos = startEnemyPos
 // sets amount of bombs to start game with
 const bombsHeightAmount = 9
 const bombsWidthAmount = 3
+let bombs = [28, 29, 30, 44, 45, 46, 60, 61, 62, 76, 77, 78, 92, 93, 94, 108, 109, 110, 124, 125, 126, 140, 141, 142, 156, 157, 158]
+const endZone = [0, 16, 32, 48, 64, 80, 96, 112, 128, 144, 160]
 // TODO fix to get central somehow no matter board size
-const startBombPos = bombsHeightAmount * bombsWidthAmount
-let currentBombPos = startBombPos
+// const startBombPos = bombsHeightAmount * bombsWidthAmount
+// let currentBombPos = startBombPos
 let currentWeaponPos = startplayerPos
-const pointsCounter = document.querySelector('#points-readout')
+let pointsCounter = document.querySelector('#points-readout')
+const healthProgress = document.querySelector('#health-bar')
+const restartBtn = document.querySelector('#restartBtn')
+const points = 20
+
+// ! restart button - wip - acting like a start button not restart, also space bar activates button? Turn off
+// https://stackoverflow.com/questions/73665175/in-html-how-to-stop-propagation-of-the-spacebar-activating-a-container-button#:~:text=1%20Answer&text=You%20can%20add%20onkeyup%20with,which%20triggers%20that%20button%20click.
+// restartBtn.addEventListener('click', function() {
+//   // lostOngoing = 100
+//   // pointsCounter.innerText = 0
+//   // removeBombs()
+//   // clearInterval(bombMovement)
+//   // addBombs()
+//   createGrid()
+//   bombAnimation()
+// })
+
 
 function createGrid() {
   for (let i = 0; i < cellCount; i++) {
@@ -180,12 +195,24 @@ function createGrid() {
     cells.push(cell)
   }
   addPlayer(currentPlayerPos)
-  addBombs(currentBombPos)
+  // addAllBombs(0)
   addEnemy(currentEnemyPos)
   // don't need, otherwise it overwrites player
   // addWeapon(currentWeaponPos)
 }
 createGrid()
+
+function addBombs() {
+  bombs.forEach(bomb => {
+    cells[bomb].classList.add('bomb')
+  })
+}
+
+function removeBombs() {
+  bombs.forEach(bomb => {
+    cells[bomb].classList.remove('bomb')
+  })
+}
 
 // player character
 // -on key or key up, stop and bobbing in place animation /
@@ -223,116 +250,40 @@ function removeEnemyRun() {
   cells[currentEnemyPos].classList.remove('enemy')
 }
 
-//add one bomb
-// function addBombs() {
-//   cells[currentBombPos].classList.add('bomb')
-//   cells[currentBombPos + width].classList.add('bomb')
-// }
-// add all bombs
-
-// calculates row number to add on to set amount of rows
-function addBombs(position) {
-  const bombsAllowedCells = (bombsHeightAmount * width) + ((Math.ceil(position / width)) * width) - width
-
-  for (let i = position + 1; i <= bombsAllowedCells; i += width) {    
-    bombCell = cells[i]
-    bombCell.classList.add('bomb')  
-    bombs.push(bombCell)
-  }
-  for (let i = position + 2; i < bombsAllowedCells; i += width) {    
-    bombCell = cells[i]
-    bombCell.classList.add('bomb')  
-    bombs.push(bombCell)
-  }
-  for (let i = position + 3; i < bombsAllowedCells; i += width) {    
-    bombCell = cells[i]
-    bombCell.classList.add('bomb')  
-    bombs.push(bombCell)
-  }
+let bombMovement
+let direction = 'down'
+function bombAnimation() {
+  addBombs()
+  bombMovement = setInterval(() => {
+    removeBombs()
+    //movedown
+    if (direction === 'down') {
+    //check for boundary
+      const cont = bombs.every(bomb => {
+        return bomb + width < cellCount
+      })
+      bombs = bombs.map(bomb => {
+        // is bomb + width (moving down) less than the border, if yes move down again otherwise go left
+        return cont ? bomb + width : bomb - 1
+      })
+      if (!cont) {
+        direction = 'up'
+      } 
+    } else {
+      const cont = bombs.every(bomb => {
+        return bomb - width >= 0
+      })
+      bombs = bombs.map(bomb => {
+        return cont ? bomb - width : bomb - 1
+      })
+      if (!cont) {
+        direction = 'down'
+      }
+    } 
+    addBombs()
+  }, 800)
 }
-
-// fetches each bomb and dead bomb, return class name and position number
-let bombGroup = []
-function returnBombs() {
-  const allLiveBombs = document.querySelectorAll('.bomb')
-  const allDeadBombs = document.querySelectorAll('.deadBomb')
-  allLiveBombs.forEach(bomb => {
-    bombGroup.push(bomb)
-  })  
-  allDeadBombs.forEach(bomb => {
-    bombGroup.push(bomb)
-  })
-}
-returnBombs()
-// cells[12].classList.add('bomb')
-
-// to go with moving function, removes bombs from cells after moving
-function removeBombs() {
-  for (let i = 0; i < cells.length; i++) {
-    bombCell = cells[i]
-    if (bombCell.classList.contains('bomb') || bombCell.classList.contains('deadBomb')) {
-      bombCell.classList.remove('bomb') || bombCell.classList.remove('deadBomb')
-    }
-  }
-}
-
-
-// ! to automate for bomb in SetInterval
-// * works
-// moving bombs down
-function moveBombDown() {
-  removeBombs(currentBombPos)
-  currentBombPos = currentBombPos + width
-  addBombs(currentBombPos)
-}
-// // moveBombDown()
-
-// // * works
-// // moving bombs up
-// function moveBombUp() {
-//   removeBombs(currentBombPos)
-//   currentBombPos = currentBombPos - width
-//   addBombs(currentBombPos)
-// }
-// moveBombUp()
-
-// function moveBombUp() {
-//   for (let i = 0; i < cells.length; i++) {
-//     bombCell = cells[i]
-//     if (bombCell.classList.contains('bomb') || bombCell.classList.contains('deadBomb')) {
-//       console.log(cell[0])
-//       bombCell - width.classList.remove('bomb')
-//       bombCell - width.classList.add('bomb')
-//     }
-//   }
-//   console.log(bombCell)
-// }
-
-
-// // * works
-// // moving bombs toward player - left
-function moveBombLeft() {
-  for (let i = 0; i < cells.length; i++) {
-    bombCell = cells[i]
-    if (bombCell.classList.contains('bomb') || bombCell.classList.contains('deadBomb')) {
-      // console.log(cells[i].id)
-      bombCell.nextElementSibling.classList.remove('bomb')
-      bombCell.previousSibling.classList.add('bomb')
-    }
-  }
-  // console.log(cells)
-}
-
-  
-
-// let bombMovement
-// function bombAnimation() {
-//   bombMovement = setInterval(() => {
-//     moveBombUp()
-
-//   }, 500)
-// }
-// bombAnimation()
+bombAnimation()
 
 
 
@@ -345,16 +296,10 @@ function controlPlayer(event) {
   if (key === 'ArrowUp' && currentPlayerPos >= width) {
     currentPlayerPos -= width
     currentWeaponPos -= width
-  } else if (key === 'ArrowDown' && currentPlayerPos >= width) {
+  } else if (key === 'ArrowDown' && currentPlayerPos + width < cells.length) {
     currentPlayerPos += width
     currentWeaponPos += width
   // * decided to keep to 1 deep for player
-    // } else if (key === 'ArrowLeft' && currentPlayerPos % width !== 0) {
-    //   currentPlayerPos--
-    //   currentWeaponPos--
-    // } else if (key === 'ArrowRight' && currentPlayerPos % width !== (width - width)){
-    //   currentPlayerPos++
-    //   currentWeaponPos++
   }
   addPlayer()
 }
@@ -382,14 +327,14 @@ function findLaunchPoint(event) {
     startWeaponTrajectory(launchPoint)
   }
 }
-let countAcross
+
 function startWeaponTrajectory(launchPoint) {
-  countAcross = setInterval(() => {
+  const countAcross = setInterval(() => {
     launchPoint++
     //remove trajectory
     cells[launchPoint].previousSibling.classList.remove('weapon')
     addWeapon(launchPoint)
-    explosion(launchPoint)
+    explosion(launchPoint, countAcross)
     if (launchPoint === currentWeaponPos + width - 1) {
       clearInterval(countAcross)
       removeWeapon(launchPoint)
@@ -399,13 +344,13 @@ function startWeaponTrajectory(launchPoint) {
 }
 
 // blows up bombs andremoves/assigns classes to cells
-function explosion(launchPoint) {
+function explosion(launchPoint, countAcross) {
   if (cells[launchPoint].classList.contains('bomb') && cells[launchPoint].classList.contains('weapon')) {
     clearInterval(countAcross)
     cells[launchPoint].classList.add('kaboom')
     cells[launchPoint].classList.add('deadBomb')
     cells[launchPoint].classList.remove('bomb')
-    pointsCounter.innerText = Number(pointsCounter.innerText) + 20
+    pointsCounter.innerText = Number(pointsCounter.innerText) + points
     removeWeapon(launchPoint)
     // removes explosion gif after 1 second
     setTimeout(function() {
@@ -414,18 +359,36 @@ function explosion(launchPoint) {
   }
 }
 
-let runTime
-function randomEnemyRun() {
-  const runNumber = Math.floor(Math.random() * height)
-  runTime = setTimeout(() => {
-    if (currentEnemyPos >= width) {
-      currentEnemyPos - (width * runNumber)
-    } else if (currentEnemyPos >= width) {
-      currentEnemyPos + (width * runNumber)
-    }
-  }, 400)
+
+// let runTime
+// function randomEnemyRun() {
+//   const runNumber = Math.floor(Math.random() * height)
+//   runTime = setInterval(() => {
+//     if (currentEnemyPos >= width) {
+//       currentEnemyPos -= (width * runNumber)
+//     } else if (currentEnemyPos >= width) {
+//       currentEnemyPos += (width * runNumber)
+//     }
+//   }, 400)
+// }
+// randomEnemyRun()
+
+// ! Change from event listener - this is placeholder to make sure functionality works
+let lostOngoing = 100
+// const button = document.querySelector('button')
+// button.addEventListener('click', 
+function playerDamage() {
+  // ! needs the if statement to function
+  // if(player classlist cotains bomb) {
+  const oneHit = 20
+  lostOngoing = lostOngoing -= oneHit
+  healthProgress.style.flexBasis = `${lostOngoing}%`
+  // }
 }
-randomEnemyRun()
+// )
+// playerDamage()
+
+
 
 
 // * Events
