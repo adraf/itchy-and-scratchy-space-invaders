@@ -1,19 +1,19 @@
 // * Timeline
-// Monday - basic game mechanics
-// -bombs 'aliens' move
+// Monday - basic game mechanics /
+// -bombs 'aliens' move /
 // --can connect with a weapon /
 // --can be removed /
 // -can move player character /
 // -points occur /
 // -can take hits
-// -can log loss of % to life
+// -can log loss of % to life /
 // -start button
 
 // Tuesday - buttons
 // -start button
 // -reset buttons
 // -pause buttons
-// -can log health to bar
+// -can log health to bar /
 // -can log points to points /
 
 // Wednesday - modals
@@ -34,8 +34,8 @@
 // start button
 // pause button
 // restart button
-// health bar
-// points 
+// health bar /
+// points /
 // instructions button
 
 // weapons /
@@ -48,20 +48,20 @@
 
 // * Executions
 
-// Use a Class for player!
+// Use a Class for player! X
 // take a hit - function/if else
-// -remove health percentage from health bar - see fundraiser project 
-// -animation - add and remove classes/keyframes 
+// -remove health percentage from health bar - see fundraiser project /
+// -animation - add and remove classes/keyframes /
 // --~character degredation past milestone percentages
 
-// land a hit
+// land a hit /
 // -remove bomb replace class with deadbomb to keep formation /
 // -animation - keyframes/gif placeholder for MVP /
 // --~add weapon progress to progress bar for power ups
 
 // fire (throw weapon)
 // -on keyup of space bar /
-// -animation of weapon (mallet) with css keyframes (on key down? maybe not - try and see)
+// -animation of weapon (mallet) with css keyframes (on key down? maybe not - try and see) /
 // ----
 // weapon {
 // animation-name: spin;
@@ -82,7 +82,7 @@
 // --currentpos to cell row length unless (if) bomb and weapon in same class (else) then blow bomb up and replace with 'deadbomb' class /
 // -weapon will have quicker setInterval to track across screen quicker /
 // -if bomb and weapon are in same classList then remove bomb /
-// -multiple weapons can be flying.
+// -multiple weapons can be flying. /
 // ----
 // if (cell.classList.contains('enemy' && 'weapon')) {
 //   cell.classList.remove('enemyImg')
@@ -91,12 +91,12 @@
 
 
 // ! bombs tracking across screen towards player character (scratchy)
-// -need to keep track of all rows and columns
+// -need to keep track of all rows and columns X
 // --add class to cell when bomb present /
 // --when bomb removed add 'deadbomb' class to keep space /
 // ! --when a bomb/many bombs (contains class) at top or bottom of column connect with border, move left towards player
-// --will have it's own set interval speed
-// -- have end point to set off game over
+// --will have it's own set interval speed /
+// -- have end point to set off game over /
 // --~increase speed slightly as moves closer
 // --~increase speed if multiple levels
 // --~enemy character throw extra bombs at intervals from random locations. Can an image pass over a background image?
@@ -158,26 +158,20 @@ const bombsHeightAmount = 9
 const bombsWidthAmount = 3
 let bombs = [28, 29, 30, 44, 45, 46, 60, 61, 62, 76, 77, 78, 92, 93, 94, 108, 109, 110, 124, 125, 126, 140, 141, 142, 156, 157, 158]
 const endZone = [0, 16, 32, 48, 64, 80, 96, 112, 128, 144, 160]
-// TODO fix to get central somehow no matter board size
-// const startBombPos = bombsHeightAmount * bombsWidthAmount
-// let currentBombPos = startBombPos
+
 let currentWeaponPos = startplayerPos
 let pointsCounter = document.querySelector('#points-readout')
 const healthProgress = document.querySelector('#health-bar')
-const restartBtn = document.querySelector('#restartBtn')
-const points = 20
-
-// ! restart button - wip - acting like a start button not restart, also space bar activates button? Turn off
-// https://stackoverflow.com/questions/73665175/in-html-how-to-stop-propagation-of-the-spacebar-activating-a-container-button#:~:text=1%20Answer&text=You%20can%20add%20onkeyup%20with,which%20triggers%20that%20button%20click.
-// restartBtn.addEventListener('click', function() {
-//   // lostOngoing = 100
-//   // pointsCounter.innerText = 0
-//   // removeBombs()
-//   // clearInterval(bombMovement)
-//   // addBombs()
-//   createGrid()
-//   bombAnimation()
-// })
+const startBtn = document.querySelector('#startBtn')
+const points = 20 
+ 
+// ! start button not restart - change names
+startBtn.addEventListener('click', function(event) {
+  // stops space bar from reclicking button, moves focus away from button
+  event.target.blur()
+  createGrid()
+  bombAnimation()
+})
 
 
 function createGrid() {
@@ -195,8 +189,8 @@ function createGrid() {
     cells.push(cell)
   }
   addPlayer(currentPlayerPos)
-  // addAllBombs(0)
   addEnemy(currentEnemyPos)
+  addEndZone()
   // don't need, otherwise it overwrites player
   // addWeapon(currentWeaponPos)
 }
@@ -211,6 +205,12 @@ function addBombs() {
 function removeBombs() {
   bombs.forEach(bomb => {
     cells[bomb].classList.remove('bomb')
+  })
+}
+
+function addEndZone() {
+  endZone.forEach(zone => {
+    cells[zone].classList.add('endZone')
   })
 }
 
@@ -281,11 +281,31 @@ function bombAnimation() {
       }
     } 
     addBombs()
-  }, 800)
+    endBombs()
+  }, 400)
 }
 bombAnimation()
 
-
+// blows bombs up when they reach end point of grid and stops movement
+function endBombs() {
+  for (let i = 0; i < cells.length; i++) {
+    const cell = cells[i]
+    if ((cell.classList.contains('endZone') || cell.classList.contains('player')) && cell.classList.contains('bomb')) {
+      clearInterval(bombMovement)
+      cell.classList.add('kaboom')
+      cell.classList.add('deadBomb')
+      cell.classList.remove('bomb')
+      // removes explosion gif after 1 second
+      setTimeout(function() {
+        cell.classList.remove('kaboom')
+      }, 1000)
+      if (cell.classList.contains('player')) {
+        cell.classList.add('playerSkeleton')
+        cell.classList.remove('player')
+      }
+    }
+  }
+}
 
 function controlPlayer(event) {
   const key = event.code
@@ -299,7 +319,7 @@ function controlPlayer(event) {
   } else if (key === 'ArrowDown' && currentPlayerPos + width < cells.length) {
     currentPlayerPos += width
     currentWeaponPos += width
-  // * decided to keep to 1 deep for player
+  // * decided to keep to 1 column for player
   }
   addPlayer()
 }
@@ -350,6 +370,10 @@ function explosion(launchPoint, countAcross) {
     cells[launchPoint].classList.add('kaboom')
     cells[launchPoint].classList.add('deadBomb')
     cells[launchPoint].classList.remove('bomb')
+    // finds bomb array and deletes exploded bomb from array
+    const findBomb = bombs.find(bomb => bomb === Number(cells[launchPoint].id))
+    bombs = bombs.filter(item => item !== findBomb)
+    // adds points for hit
     pointsCounter.innerText = Number(pointsCounter.innerText) + points
     removeWeapon(launchPoint)
     // removes explosion gif after 1 second
@@ -359,6 +383,34 @@ function explosion(launchPoint, countAcross) {
   }
 }
 
+function getEnemyLaunchPoint(){
+  const randomTime = setInterval(() => {
+    let enemyLaunchPoint
+    const runNumber = Math.floor(Math.random() * height) * width - 1
+    if (runNumber > 0) {
+      // console.log(runNumber)
+      // console.log(cells[runNumber].id)
+      enemyLaunchPoint = Number(cells[runNumber].id)
+      // console.log(enemyLaunchPoint)
+      startEnemyWeapon(enemyLaunchPoint)
+    }
+  }, 3000)
+}
+// getEnemyLaunchPoint()
+
+function startEnemyWeapon(enemyLaunchPoint) {
+  const countReturn = setInterval(() => {
+    console.log(enemyLaunchPoint--)
+    cells[enemyLaunchPoint].nextSibling.classList.remove('weapon')
+    addWeapon(enemyLaunchPoint)
+    if (enemyLaunchPoint === endZone) {
+      clearInterval(countReturn)
+      removeWeapon(enemyLaunchPoint)
+      console.log('end of the line')
+    } 
+  }, 800)
+
+}
 
 // let runTime
 // function randomEnemyRun() {
@@ -372,6 +424,8 @@ function explosion(launchPoint, countAcross) {
 //   }, 400)
 // }
 // randomEnemyRun()
+
+
 
 // ! Change from event listener - this is placeholder to make sure functionality works
 let lostOngoing = 100

@@ -77,6 +77,12 @@ body {
   background-size: 130%; 
 }
 
+
+.game-grid div.playerSkeleton {
+  background-image: url('../assets/Scratchy_Game_Over.gif');
+  background-size: 70%;
+}
+
 .game-grid div.bomb {
   background-image: url('../assets/bomb.png');
   background-size: 50%;
