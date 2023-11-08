@@ -9,6 +9,9 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&family=Oregano:ital@0;1&display=swap" rel="stylesheet">
+  <link rel="apple-touch-icon" sizes="180x180" href="../itchy-and-scratchy-space-invaders/assets/favicon_io/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="../itchy-and-scratchy-space-invaders/assets/favicon_io/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="../itchy-and-scratchy-space-invaders/assets/favicon_io/favicon-16x16.png">
 </head>
 <body>
   <!-- https://www.w3schools.com/howto/howto_css_modals.asp -->
@@ -16,14 +19,22 @@
   <div class="modal" id="intro-to-game-modal">
     <!-- modal content -->
     <div class="modal-content" id="into-to-game-modal-info">
-      <h2>Title</h2>
+      <h2>The Itchy & Scratchy Game</h2>
       <!-- gif of cartoon intro? -->
+      <img src="../itchy-and-scratchy-space-invaders/assets/I&S-Intro.gif" alt="Itchy & Scratchy Intro Video">
       <article>
         <!-- rules/instructions -->
-        <!-- keys to press -->
+        <h4>Welcome to the Itchy & Scratchy Battle Royale</h4>
+        <p>The aim of the game is to destroy as much as Itchy can throw at you before you become Poochie chow</p>
         <!-- point system -->
+        <h4>Points</h4>  
+        <p>For every bomb you destroy you get <span class="highlight">20 points</span></p>
+        <p>Make sure to dodge Itchy's mallets otherwise you will lose health,<br>Lose all your health & it's Game Over!</p>
+        <!-- keys to press -->
+        <h4>Controls</h4>  
+        <p>You can move up & down using the <span class="highlight">&uarr;</span> & <span class="highlight">&darr;</span> keys,<br>& to throw your own mallets, hit<br><br><span class="spaceStyling highlight">space bar</span></p>
       </article>
-      <p class="high-score"></p>
+      <p class="high-score" id="high-score-intro"></p>
       <button class="playBtn" id="startBtn">Start</button>
     </div>
   </div>
@@ -35,30 +46,46 @@
         <!-- <button class="playBtn" id="pauseBtn">Pause</button> -->
         <button class="playBtn" id="restartBtn">Restart</button>
       </div>
-      <div id="health-container">
-        <div id="health-bar"></div>
-        <div id="health-bar-total"></div>
+      <div id="health-section">
+        <h5>Health</h5>
+        <div id="health-container">
+          <div id="health-bar"></div>
+          <div id="health-bar-total"></div>
+        </div>
       </div>
-      <div id="points-container">
-        <div id="points-readout">0</div>
+      <div id="points-section">
+        <h5>Points</h5>
+        <div class="points-container">
+          <div class="points-readout">0</div>
+        </div>
       </div>
       <!-- https://www.w3schools.com/howto/howto_js_curtain_menu.asp -->
       <!-- open burger menu overlay -->
       <img id="burger-menu-btn" src="../itchy-and-scratchy-space-invaders/assets/krusty-burger.png" alt="krusty-burger-menu-icon">
       <!-- burger menu overlay content -->
-      <div class="burger-menu-overlay">
-        <a href=""></a>
-        <div class="burger-menu-container">
-          <h2>Title</h2>
-          <article class="intro-to-game-info" id="burger-menu-info">
-            <!-- rules/instructions -->
-            <!-- keys to press -->
-            <!-- point system -->
-            <!-- current high score -->
-          </article>
-            <!-- start button -->
+        <div class="burger-menu-overlay">
+          <a href="javascript:void(0)" class="closebtn" onclick="closeOverlay()">X</a>
+          <div class="burger-menu-container">
+            <h2>The Itchy & Scratchy Game</h2>
+            <!-- gif of cartoon intro? -->
+            <img src="../itchy-and-scratchy-space-invaders/assets/I&T-Pause.gif" alt="Itchy & Scratchy Pause Video">
+            <article class="intro-to-game-info" id="burger-menu-info">
+              <!-- rules/instructions -->
+              <h4>Welcome to the Itchy & Scratchy Battle Royale</h4>
+              <p>The aim of the game is to destroy as much as Itchy can throw at you before you become Poochie chow</p>
+              <!-- point system -->
+              <h4>Points</h4>  
+              <p>For every bomb you destroy you get <span class="highlight">20 points</span></p>
+              <p>Make sure to dodge Itchy's mallets otherwise you will lose health,<br>Lose all your health & it's Game Over!</p>
+              <!-- keys to press -->
+              <h4>Controls</h4>  
+              <p>You can move up & down using the <span class="highlight">&uarr;</span> & <span class="highlight">&darr;</span> keys,<br>& to throw your own mallets, hit<br><br><span class="spaceStyling highlight">space bar</span></p>
+            </article>
+            <p class="high-score" id="high-score-burger"></p>
+            <!-- ! if pause figured out, add back in -->
+            <!-- <button class="playBtn" id="startBtn">Start</button> -->
+          </div>
         </div>
-      </div>
     </section>
   </header>
       <!-- background image container -->
@@ -72,11 +99,16 @@
   <div class="modal" id="game-over-modal">
     <!-- modal content -->
     <div class="modal-content" id="game-over-modal-info">
-      <h2>Title</h2>
+      <h2>Game Over</h2>
       <!-- finalscore -->
+      <div id="winning-player"></div>
+      <p>Your Final Score</p>
+      <div class="points-container">
+        <div class="points-readout">0</div>
+      </div>
       <!-- high score -->
       <!-- play again button - same as reset button function -->
-      <!-- <button class="playBtn" id="restartBtn">Play Again</button> -->
+      <button class="playBtn" id="playAgain">Play Again</button>
       <!-- exit button - prompts intro to game modal -->
     </div>
   </div>

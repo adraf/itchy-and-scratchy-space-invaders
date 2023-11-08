@@ -8,6 +8,7 @@
 /* font-family: 'Luckiest Guy', cursive; */
 /* font-family: 'Oregano', cursive; */
 
+/* use var for colors */
 :root {
   --yellow: #fed439;
   --red: #C80813FF;
@@ -15,6 +16,8 @@
   --light-red: rgb(232, 4, 16);
   --pink: #FD8CC1FF;
   --purple: #370335FF;
+  --light-blue: #71D0F5FF;
+  --krusty-green: #1A9993FF
 }
 
 * {
@@ -34,11 +37,127 @@ body {
   background-color: var(--yellow);
 }
 
-/* ! use var for colors */
-
 /* to display later */
-.modal, .burger-menu-overlay {
+.burger-menu-overlay {
+  display: flex;
+  align-items: center;
+  z-index: 2;
+  width: 0;
+  height: 100%;
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  overflow-y: hidden;
+  transition: 0.5s;
+  background-color: var(--light-blue);
+  border-radius: 10px 0 0 10px;
+}
+
+.burger-menu-container {
+  position: relative;
+  width: 90%;
+  text-align: center;
+  margin: 0 auto;
+}
+
+.burger-menu-overlay .closebtn {
+  color: var(--purple);
+  position: absolute;
+  font-size: 50px;
+  margin: 5px 5px;
+  top: 15px;
+  left: 15px;
+}
+
+.burger-menu-overlay a {
+  text-decoration: none;
+  display: block;
+  transition: 0.2s;
+}
+
+.burger-menu-overlay a:hover {
+  color: var(--pink);
+}
+
+.modal {
+  height: 80vh;
+  width: 400px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-around;
+  background-color: var(--light-blue);
+  border-radius: 10px;
+  z-index: 2;
+}
+
+.modal-content {
+  height: 80%;
+  align-self: center;
+  width: 80%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-evenly;
+  text-align: center;
+}
+
+#game-over-modal {
   display: none;
+}
+
+.modal h2 {
+  font-size: 30px;
+  text-align: center;
+  margin: 0;
+  color: var(--purple);
+}
+
+#game-over-modal h2 {
+  font-size: 70px;
+}
+
+#winning-player {
+  color: var(--yellow);
+  font-size: 25px;
+}
+
+#intro-to-game-modal {
+  /* display: none; */
+  height: 90vh;
+  width: 500px;
+}
+
+#into-to-game-modal-info {
+  height: 95%;
+}
+
+#intro-to-game-modal img, .burger-menu-container img {
+  height: 10em;
+  margin: 10px;
+}
+
+h4 {
+  margin: 10px;
+  color: var(--purple);
+}
+
+#intro-to-game-modal p {
+  font-size: 0.8em;
+}
+
+.highlight {
+  color: var(--light-red);
+}
+
+.spaceStyling {
+  padding: 5px 5px 3px 5px;
+  border: 0.4px solid black;
+  border-radius: 4px;
 }
 
 /* game grid */
@@ -48,9 +167,11 @@ body {
   justify-content: center;
   align-items: center; */
   position: absolute;
-  bottom: 1em;
+  bottom: 1rem;
   left: 50%;
   transform: translate(-50%);
+  /* stops gaps between rows */
+  font-size: 0;
 }
 
 .game-grid {
@@ -60,7 +181,7 @@ body {
 }
 
 .game-grid div {
-  border: 1px solid lightgrey;
+  /* border: 1px solid lightgrey; */
   display: inline-block;
   background-repeat: no-repeat;
   background-size: contain;
@@ -85,11 +206,12 @@ body {
 
 .game-grid div.bomb {
   background-image: url('../assets/bomb.png');
-  background-size: 50%;
-  /* animation-name: spin;
-  animation-duration: 4000ms;
+  background-size: 40%;
+  background-position: 50% 30%;
+  animation-name: spinBackwards;
+  animation-duration: 1000ms;
   animation-iteration-count: infinite;
-  animation-timing-function: linear; */
+  animation-timing-function: linear;
 }
 
 .game-grid div.weapon {
@@ -99,7 +221,6 @@ body {
   animation-duration: 300ms;
   animation-iteration-count: infinite;
   animation-timing-function: linear;
-
 }
 
 @keyframes spin {
@@ -111,15 +232,39 @@ body {
   }
 }
 
+@keyframes spinBackwards {
+  from {
+    transform:rotate(0deg);
+}
+to {
+    transform:rotate(-360deg);
+}
+}
+
 .game-grid div.kaboom {
   background-image: url('../assets/kaboom.gif');
 }
 
+.game-grid div.enemy-weapon {
+  background-image: url('../assets/mallet.png');
+  background-size: 30%;
+  animation-name: spinBackwards;
+  animation-duration: 300ms;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
+}
+
 .game-grid div.enemy {
   background-image: url('../assets/Itchy_run_gif.gif');
-  /* ! to fix */
   background-size: 60%;
   background-position: 50% 80%;
+}
+
+.high-score {
+  color: var(--krusty-green);
+  background-color: var(--yellow);
+  padding: 10px 25px;
+  border-radius: 10px;
 }
 
 header {
@@ -163,9 +308,19 @@ h1 {
   border-radius: 2em;
 }
 
+h5 {
+  margin: 0;
+  color: var(--purple);
+}
+
+#health-section, #points-section {
+  display: flex;
+  flex-direction: column;
+}
+
 #health-container {
   background-color: white;
-  width: 8em;
+  width: 10em;
   height: 1.5em;
   border-radius: 0.2em;
   display: flex;
@@ -180,18 +335,18 @@ h1 {
 
 #health-bar-total {
   flex-grow: 1;
-  background-color: white;
+  background-color: var(--dark-red);
   border-radius: 0 0.2em 0.2em 0;
 }
 
-#points-container {
+.points-container {
   background-color: white;
   width: 4em;
   height: 1.5em;
   border-radius: 0.2em;
 }
 
-#points-readout {
+.points-readout {
   height: inherit;
   width: 4em;
   color: var(--red);
@@ -228,6 +383,10 @@ h1 {
 #burger-menu-btn {
   height: 3.5em;
   cursor: pointer;
+}
+
+#burger-menu-btn:hover {
+  opacity: 60%;
 }
 
 #background-image-container {

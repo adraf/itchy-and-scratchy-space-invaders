@@ -5,21 +5,21 @@
 // --can be removed /
 // -can move player character /
 // -points occur /
-// -can take hits
+// -can take hits /
 // -can log loss of % to life /
-// -start button
+// -start button /
 
 // Tuesday - buttons
-// -start button
-// -reset buttons
+// -start button /
+// -reset buttons /
 // -pause buttons
 // -can log health to bar /
 // -can log points to points /
 
 // Wednesday - modals
-// -start modal
-// -game over modal
-// -side (krusty) burger menu for pause
+// -start modal /
+// -game over modal /
+// -side (krusty) burger menu for pause /
 
 // Thursday - animation
 // -key frame animations /
@@ -31,9 +31,9 @@
 
 // * Elements
 
-// start button
+// start button /
 // pause button
-// restart button
+// restart button /
 // health bar /
 // points /
 // instructions button
@@ -49,7 +49,7 @@
 // * Executions
 
 // Use a Class for player! X
-// take a hit - function/if else
+// take a hit - function/if else /
 // -remove health percentage from health bar - see fundraiser project /
 // -animation - add and remove classes/keyframes /
 // --~character degredation past milestone percentages
@@ -63,32 +63,11 @@
 // -on keyup of space bar /
 // -animation of weapon (mallet) with css keyframes (on key down? maybe not - try and see) /
 // ----
-// weapon {
-// animation-name: spin;
-// animation-duration: 4000ms;
-// animation-iteration-count: infinite;
-// animation-timing-function: linear;
-// }
-// @keyframes spin {
-//   from {
-//       transform:rotate(0deg);
-//   }
-//   to {
-//       transform:rotate(360deg);
-//   }
-// }
-// ----
 // ! track progress across row (cell.row?)
 // --currentpos to cell row length unless (if) bomb and weapon in same class (else) then blow bomb up and replace with 'deadbomb' class /
 // -weapon will have quicker setInterval to track across screen quicker /
 // -if bomb and weapon are in same classList then remove bomb /
 // -multiple weapons can be flying. /
-// ----
-// if (cell.classList.contains('enemy' && 'weapon')) {
-//   cell.classList.remove('enemyImg')
-//   cell.classList.add('explosionGif')
-// }
-
 
 // ! bombs tracking across screen towards player character (scratchy)
 // -need to keep track of all rows and columns X
@@ -99,49 +78,49 @@
 // -- have end point to set off game over /
 // --~increase speed slightly as moves closer
 // --~increase speed if multiple levels
-// --~enemy character throw extra bombs at intervals from random locations. Can an image pass over a background image?
+// --~enemy character throw extra bombs at intervals from random locations.  / Can an image pass over a background image
 
 // enemy character (if there's time)
 // -random run up and down and random stops
-// - ability to throw bombs at intervals
+// - ability to throw bombs at intervals /
 // - could take damage, needs 3 hits, extra points
 
 // intro to game modal
 // window event
 // -contains:
-// --title
-// --instructions/rules
-// --keys to press
-// --- up, down, left, right, space to fire
-// --point system
-// --- 50 points per bomb
+// --title /
+// --instructions/rules /
+// --keys to press /
+// --- up, down, left, right, space to fire /
+// --point system /
+// --- 20 points per bomb /
 // ---~ if we have enemy character would take 3 hits to kill, 100 points a hit
 // --current high score
 // --- pull from Local Storage
-// --start game button
-// --- uses same function for start button
+// --start game button /
+// --- uses same function for start button /
 
 // game over
-// -when health gets to 0
-// - when enemies reach end point
+// -when health gets to 0 /
+// - when enemies reach end point /
 // -window event
-// -modal pop up with final score 
-// --- const final score from innerText and add to innerText in modal
-// -have play again button - same functionality as reset button
+// -modal pop up with final score /
+// --- const final score from innerText and add to innerText in modal /
+// -have play again button - same functionality as reset button / 
 // --- event listener on button
 // - wipe scores, reset health, reset players and enemies
 // -display high score
 // --- const highscore and add to innerText
-// --~include how many bombs you hit?
+// --~include how many bombs you hit? Maths of remaining array?
 // -exit button - prompts intro to game modal
 
 
 // * Grid
 
 // ! set up a game grid 11H x 15W
-// -character has 2 deep but full height on the left //
+// -character has 2 deep but full height on the left /
 // -bombs have middle of grid moving right to left and up and down /
-// -enemy character has 1 deep full height on the right
+// -enemy character has 1 deep full height on the right /
 // ----
 const grid = document.querySelector('.game-grid')
 const cells = []
@@ -158,27 +137,34 @@ const bombsHeightAmount = 9
 const bombsWidthAmount = 3
 let bombs = [28, 29, 30, 44, 45, 46, 60, 61, 62, 76, 77, 78, 92, 93, 94, 108, 109, 110, 124, 125, 126, 140, 141, 142, 156, 157, 158]
 const endZone = [0, 16, 32, 48, 64, 80, 96, 112, 128, 144, 160]
-
 let currentWeaponPos = startplayerPos
-let pointsCounter = document.querySelector('#points-readout')
+let pointsCounter = document.querySelector('.points-readout')
+const modalPointsTotal = document.querySelector('#game-over-modal-info .points-readout')
 const healthProgress = document.querySelector('#health-bar')
 const startBtn = document.querySelector('#startBtn')
-const points = 20 
- 
-// ! start button not restart - change names
-startBtn.addEventListener('click', function(event) {
-  // stops space bar from reclicking button, moves focus away from button
-  event.target.blur()
-  createGrid()
+const playAgainBtn = document.querySelector('#playAgain')
+const refreshBtn = document.querySelector('#restartBtn')
+const burgerBtn = document.querySelector('#burger-menu-btn')
+const hitBombpoints = 20 
+// const hitWeaponPoints = 40
+const introToGameModal = document.querySelector('#intro-to-game-modal')
+const gameOverModal = document.querySelector('#game-over-modal')
+
+startBtn.addEventListener('click', function() {
+  introToGameModal.style.display = 'none'
   bombAnimation()
 })
 
+function removeGrid() {
+  document.querySelector('.game-grid').innerHTML = ''
+}
 
 function createGrid() {
+  removeGrid()
   for (let i = 0; i < cellCount; i++) {
     const cell = document.createElement('div')
     // assigns numbers to all cells
-    cell.innerText = i
+    // cell.innerText = i
     // means you can keep a reference later on
     cell.id = i
     // creates grid
@@ -191,10 +177,11 @@ function createGrid() {
   addPlayer(currentPlayerPos)
   addEnemy(currentEnemyPos)
   addEndZone()
+  getEnemyLaunchPoint()
   // don't need, otherwise it overwrites player
   // addWeapon(currentWeaponPos)
 }
-createGrid()
+// createGrid()
 
 function addBombs() {
   bombs.forEach(bomb => {
@@ -250,9 +237,23 @@ function removeEnemyRun() {
   cells[currentEnemyPos].classList.remove('enemy')
 }
 
+function addEnemyWeapon(position) {
+  cells[position].classList.add('enemy-weapon')
+  // cells[position].innerHTML += '<img id="enemy-mallet" src="../itchy-and-scratchy-space-invaders/assets/mallet.png" alt="enemy-mallet"></img>'
+}
+
+function removeEnemyWeapon(position) {
+  cells[position].classList.remove('enemy-weapon')
+  // cells[position].innerHTML = ''
+  // document.getElementById('enemy-weapon').style.display = 'none'
+
+}
+
 let bombMovement
 let direction = 'down'
 function bombAnimation() {
+  // ! put back? does it affeact start/ pause butons?
+  createGrid()
   addBombs()
   bombMovement = setInterval(() => {
     removeBombs()
@@ -282,9 +283,11 @@ function bombAnimation() {
     } 
     addBombs()
     endBombs()
-  }, 400)
+    winGame()
+    // ! change back to 1000
+  }, 1000)
 }
-bombAnimation()
+// bombAnimation()
 
 // blows bombs up when they reach end point of grid and stops movement
 function endBombs() {
@@ -303,6 +306,7 @@ function endBombs() {
         cell.classList.add('playerSkeleton')
         cell.classList.remove('player')
       }
+      gameOver()
     }
   }
 }
@@ -319,7 +323,6 @@ function controlPlayer(event) {
   } else if (key === 'ArrowDown' && currentPlayerPos + width < cells.length) {
     currentPlayerPos += width
     currentWeaponPos += width
-  // * decided to keep to 1 column for player
   }
   addPlayer()
 }
@@ -358,7 +361,6 @@ function startWeaponTrajectory(launchPoint) {
     if (launchPoint === currentWeaponPos + width - 1) {
       clearInterval(countAcross)
       removeWeapon(launchPoint)
-      console.log('end of the line')
     }
   }, 300)
 }
@@ -374,43 +376,48 @@ function explosion(launchPoint, countAcross) {
     const findBomb = bombs.find(bomb => bomb === Number(cells[launchPoint].id))
     bombs = bombs.filter(item => item !== findBomb)
     // adds points for hit
-    pointsCounter.innerText = Number(pointsCounter.innerText) + points
+    pointsCounter.innerText = Number(pointsCounter.innerText) + hitBombpoints
     removeWeapon(launchPoint)
+    healthProgress.style.flexBasis === '0%'
     // removes explosion gif after 1 second
     setTimeout(function() {
       cells[launchPoint].classList.remove('kaboom')
     }, 1000)
   }
 }
-
+let randomTime
 function getEnemyLaunchPoint(){
-  const randomTime = setInterval(() => {
+  randomTime = setInterval(() => {
     let enemyLaunchPoint
     const runNumber = Math.floor(Math.random() * height) * width - 1
     if (runNumber > 0) {
-      // console.log(runNumber)
-      // console.log(cells[runNumber].id)
       enemyLaunchPoint = Number(cells[runNumber].id)
-      // console.log(enemyLaunchPoint)
       startEnemyWeapon(enemyLaunchPoint)
     }
-  }, 3000)
+  }, 4000)
 }
 // getEnemyLaunchPoint()
-
 function startEnemyWeapon(enemyLaunchPoint) {
   const countReturn = setInterval(() => {
-    console.log(enemyLaunchPoint--)
-    cells[enemyLaunchPoint].nextSibling.classList.remove('weapon')
-    addWeapon(enemyLaunchPoint)
-    if (enemyLaunchPoint === endZone) {
+    enemyLaunchPoint--
+    cells[enemyLaunchPoint].nextSibling.classList.remove('enemy-weapon')
+    // cells[enemyLaunchPoint].nextSibling.style.display = 'none'
+    addEnemyWeapon(enemyLaunchPoint)
+    playerDamage(enemyLaunchPoint)
+    if (cells[enemyLaunchPoint].classList.contains('enemy-weapon') && cells[enemyLaunchPoint].classList.contains('endZone')) {
       clearInterval(countReturn)
-      removeWeapon(enemyLaunchPoint)
-      console.log('end of the line')
+      removeEnemyWeapon(enemyLaunchPoint)
     } 
-  }, 800)
-
+  }, 300)
 }
+
+// function weaponOnWeapon(launchPoint, enemyLaunchPoint, countReturn) {
+//   console.log('hit enemy weapon')
+//   pointsCounter.innerText = Number(pointsCounter.innerText) + hitWeaponPoints
+//   clearInterval(countReturn)
+//   removeEnemyWeapon(enemyLaunchPoint)
+//   removeWeapon(launchPoint)
+// }
 
 // let runTime
 // function randomEnemyRun() {
@@ -425,25 +432,50 @@ function startEnemyWeapon(enemyLaunchPoint) {
 // }
 // randomEnemyRun()
 
-
-
-// ! Change from event listener - this is placeholder to make sure functionality works
-let lostOngoing = 100
-// const button = document.querySelector('button')
-// button.addEventListener('click', 
-function playerDamage() {
-  // ! needs the if statement to function
-  // if(player classlist cotains bomb) {
-  const oneHit = 20
-  lostOngoing = lostOngoing -= oneHit
-  healthProgress.style.flexBasis = `${lostOngoing}%`
-  // }
+function winGame() {
+  if (bombs.length === 0) {
+    gameOver()
+    document.querySelector('#winning-player').innerHTML += '<h3>You&apos;re a winner!</h3>'
+    clearInterval(bombMovement)
+    clearInterval(randomTime)
+    removeEnemyRun()
+    removeEnemyWeapon()
+    removeWeapon()
+  }
 }
-// )
-// playerDamage()
 
+let lostOngoing = 100
+function playerDamage(enemyLaunchPoint) {
+  if (cells[enemyLaunchPoint].classList.contains('player') && cells[enemyLaunchPoint].classList.contains('enemy-weapon')) {
+    const oneHit = 20
+    lostOngoing = lostOngoing -= oneHit
+    healthProgress.style.flexBasis = `${lostOngoing}%`
+  } else if (healthProgress.style.flexBasis === '0%') {
+    gameOver()
+  }
+}
 
+function gameOver() {
+  closeOverlay()
+  setTimeout(function() {
+    gameOverModal.style.display = 'flex'
+    modalPointsTotal.innerText = pointsCounter.innerText
+  }, 1100)
+}
 
+function restart() {
+  window.location.reload()
+}
+
+burgerBtn.addEventListener('click', function() {
+  document.querySelector('.burger-menu-overlay').style.width = '50%'
+  // clearInterval(bombMovement)
+})
+
+function closeOverlay() {
+  document.querySelector('.burger-menu-overlay').style.width = '0%'
+  // bombAnimation()
+}
 
 // * Events
 
@@ -468,11 +500,13 @@ function playerDamage() {
 // -same functions as start button.
 
 // key press events
-// -space bar to fire
-// -up, down, left, right
+// -space bar to fire /
+// -up, down, left, right /
 document.addEventListener('keyup', controlPlayer)
 document.addEventListener('keyup', findLaunchPoint)
 document.addEventListener('keydown', playerRun)
+playAgainBtn.addEventListener('click', restart)
+refreshBtn.addEventListener('click', restart)
 
 // instructions button
 // -same as pause button
@@ -480,15 +514,25 @@ document.addEventListener('keydown', playerRun)
 
 // * Page Load
 
-// create grid
-
+// create grid /
 // ! local storage high scores - nice to have
-// intro to game modal - window event
-// favicon
+// intro to game modal - window event /
+// favicon /
 
+
+localStorage.setItem('highScore', 0)
+if (Number(localStorage.getItem('highScore')) < Number(pointsCounter.innerText)) {
+  localStorage.setItem('highScore', Number(pointsCounter.innerText))
+
+}
+document.querySelector('#high-score-burger').innerHTML = `High Score<br>${localStorage.getItem('highScore')}`
+document.querySelector('#high-score-intro').innerHTML = `High Score<br>${localStorage.getItem('highScore')}`
 
 
 // * Instructions
 
 // Welcome to the Itchy and Scratchy Battle Royale
 // The aim of the game is to destroy as much as Itchy can throw at you before you become Poochie chow
+// For every bomb you destroy you get 20 points
+// Make sure to dodge Itchy's mallets otherwise you will lose health!
+// You can move up and down using the UP and DOWN keys, and you can hit SPACE to throw your own mallets
