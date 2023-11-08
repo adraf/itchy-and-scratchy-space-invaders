@@ -140,6 +140,7 @@ const endZone = [0, 16, 32, 48, 64, 80, 96, 112, 128, 144, 160]
 let currentWeaponPos = startplayerPos
 let pointsCounter = document.querySelector('.points-readout')
 const modalPointsTotal = document.querySelector('#game-over-modal-info .points-readout')
+const healthBar = document.querySelector('#health-container')
 const healthProgress = document.querySelector('#health-bar')
 const startBtn = document.querySelector('#startBtn')
 const playAgainBtn = document.querySelector('#playAgain')
@@ -149,9 +150,25 @@ const hitBombpoints = 20
 // const hitWeaponPoints = 40
 const introToGameModal = document.querySelector('#intro-to-game-modal')
 const gameOverModal = document.querySelector('#game-over-modal')
+const gameOverAudio = 'assets/game-over.mp3'
+const audio = new Audio(gameOverAudio)
+audio.play()
 
 startBtn.addEventListener('click', function() {
   introToGameModal.style.display = 'none'
+  // Theme Song
+  const themeAudio = new Audio('assets/themeSong.mp3')
+  themeAudio.play()
+
+  function replay() {
+    themeAudio.addEventListener('ended', function() {
+      this.currentTime = 0
+      this.play()
+    }, false)
+  
+  }
+  // ! turned off theme - need it to stop on game over!
+  // replay()
   bombAnimation()
 })
 
@@ -370,6 +387,8 @@ function explosion(launchPoint, countAcross) {
   if (cells[launchPoint].classList.contains('bomb') && cells[launchPoint].classList.contains('weapon')) {
     clearInterval(countAcross)
     cells[launchPoint].classList.add('kaboom')
+    const explosionAudio = new Audio('assets/explosion.mp3')
+    explosionAudio.play()
     cells[launchPoint].classList.add('deadBomb')
     cells[launchPoint].classList.remove('bomb')
     // finds bomb array and deletes exploded bomb from array
@@ -445,8 +464,11 @@ function winGame() {
 }
 
 let lostOngoing = 100
-function playerDamage(enemyLaunchPoint) {
+function playerDamage(enemyLaunchPoint) {  
   if (cells[enemyLaunchPoint].classList.contains('player') && cells[enemyLaunchPoint].classList.contains('enemy-weapon')) {
+    healthBar.style.animation = 'shake 0.5s'
+    const damageAudio = new Audio('assets/take-a-hit.mp3')
+    damageAudio.play()
     const oneHit = 20
     lostOngoing = lostOngoing -= oneHit
     healthProgress.style.flexBasis = `${lostOngoing}%`
@@ -457,10 +479,13 @@ function playerDamage(enemyLaunchPoint) {
 
 function gameOver() {
   closeOverlay()
+  const gameOverAudio = new Audio('assets/game-over.mp3')
+  gameOverAudio.play()
   setTimeout(function() {
     gameOverModal.style.display = 'flex'
     modalPointsTotal.innerText = pointsCounter.innerText
   }, 1100)
+ 
 }
 
 function restart() {
@@ -476,6 +501,7 @@ function closeOverlay() {
   document.querySelector('.burger-menu-overlay').style.width = '0%'
   // bombAnimation()
 }
+
 
 // * Events
 
@@ -508,9 +534,9 @@ document.addEventListener('keydown', playerRun)
 playAgainBtn.addEventListener('click', restart)
 refreshBtn.addEventListener('click', restart)
 
-// instructions button
+// instructions button /
 // -same as pause button
-// -pop out burger menu, 1/3 to 1/2 of screen, has same info as intro to game modal
+// -pop out burger menu, 1/3 to 1/2 of screen, has same info as intro to game modal /
 
 // * Page Load
 
