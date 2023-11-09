@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Scar Trek: The Next Laceration</title>
+  <title>Itchy & Scratchy - Battle Royale</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="styles/main.css">
   <script defer src="scripts/app.js" charset="utf-8"></script>
@@ -14,7 +14,6 @@
   <link rel="icon" type="image/png" sizes="16x16" href="../itchy-and-scratchy-space-invaders/assets/favicon_io/favicon-16x16.png">
 </head>
 <body>
-  <!-- https://www.w3schools.com/howto/howto_css_modals.asp -->
   <!-- intro to game modal -->
   <div class="modal" id="intro-to-game-modal">
     <!-- modal content -->
@@ -29,6 +28,7 @@
         <!-- point system -->
         <h4>Points</h4>  
         <p>For every bomb you destroy you get <span class="highlight">20 points</span></p>
+        <p>If you hit Itchy you get <span class="highlight">50 points</span></p>
         <p>Make sure to dodge Itchy's mallets otherwise you will lose health,<br>Lose all your health & it's Game Over!</p>
         <!-- keys to press -->
         <h4>Controls</h4>  
@@ -40,7 +40,7 @@
   </div>
   <!-- controls section -->
   <header>
-    <h1><span class="smallItalics">The</span>&nbsp;Itchy & Scratchy&nbsp;<span class="smallItalics">Show</span></h1>
+    <h1><span class="smallItalics">The</span>&nbsp;Itchy & Scratchy&nbsp;<span class="smallItalics">Game</span></h1>
     <section class="top-controls-container">
       <div id="buttons-container">
         <!-- <button class="playBtn" id="pauseBtn">Pause</button> -->
@@ -76,13 +76,14 @@
               <!-- point system -->
               <h4>Points</h4>  
               <p>For every bomb you destroy you get <span class="highlight">20 points</span></p>
+              <p>If you hit Itchy you get <span class="highlight">50 points</span></p>
               <p>Make sure to dodge Itchy's mallets otherwise you will lose health,<br>Lose all your health & it's Game Over!</p>
               <!-- keys to press -->
               <h4>Controls</h4>  
               <p>You can move up & down using the <span class="highlight">&uarr;</span> & <span class="highlight">&darr;</span> keys,<br>& to throw your own mallets, hit<br><br><span class="spaceStyling highlight">space bar</span></p>
             </article>
             <p class="high-score" id="high-score-burger"></p>
-            <!-- ! if pause figured out, add back in -->
+            <!-- * if pause figured out, add back in -->
             <!-- <button class="playBtn" id="startBtn">Start</button> -->
           </div>
         </div>
@@ -106,8 +107,9 @@
       <div class="points-container">
         <div class="points-readout">0</div>
       </div>
+      <p class="high-score" id="high-score-game-over"></p>
       <!-- high score -->
-      <!-- play again button - same as reset button function -->
+      <!-- play again button - same as reset button -->
       <button class="playBtn" id="playAgain">Play Again</button>
       <!-- exit button - prompts intro to game modal -->
     </div>

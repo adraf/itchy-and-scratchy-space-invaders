@@ -95,29 +95,28 @@
 // --point system /
 // --- 20 points per bomb /
 // ---~ if we have enemy character would take 3 hits to kill, 100 points a hit
-// --current high score
-// --- pull from Local Storage
+// --current high score /
+// --- pull from Local Storage /
 // --start game button /
 // --- uses same function for start button /
 
 // game over
 // -when health gets to 0 /
 // - when enemies reach end point /
-// -window event
 // -modal pop up with final score /
 // --- const final score from innerText and add to innerText in modal /
 // -have play again button - same functionality as reset button / 
-// --- event listener on button
-// - wipe scores, reset health, reset players and enemies
-// -display high score
-// --- const highscore and add to innerText
+// --- event listener on button /
+// - wipe scores, reset health, reset players and enemies /
+// -display high score /
+// --- const highscore and add to innerText /
 // --~include how many bombs you hit? Maths of remaining array?
-// -exit button - prompts intro to game modal
+// -exit button - prompts intro to game modal /
 
 
 // * Grid
 
-// ! set up a game grid 11H x 15W
+//  set up a game grid 11H x 15W /
 // -character has 2 deep but full height on the left /
 // -bombs have middle of grid moving right to left and up and down /
 // -enemy character has 1 deep full height on the right /
@@ -137,40 +136,66 @@ const bombsHeightAmount = 9
 const bombsWidthAmount = 3
 let bombs = [28, 29, 30, 44, 45, 46, 60, 61, 62, 76, 77, 78, 92, 93, 94, 108, 109, 110, 124, 125, 126, 140, 141, 142, 156, 157, 158]
 const endZone = [0, 16, 32, 48, 64, 80, 96, 112, 128, 144, 160]
-let currentWeaponPos = startplayerPos
-let pointsCounter = document.querySelector('.points-readout')
+let currentWeaponPos = currentPlayerPos
+const pointsCounter = document.querySelector('.points-readout')
 const modalPointsTotal = document.querySelector('#game-over-modal-info .points-readout')
+const introImg = document.querySelector('#into-to-game-modal-info img')
 const healthBar = document.querySelector('#health-container')
 const healthProgress = document.querySelector('#health-bar')
 const startBtn = document.querySelector('#startBtn')
 const playAgainBtn = document.querySelector('#playAgain')
 const refreshBtn = document.querySelector('#restartBtn')
 const burgerBtn = document.querySelector('#burger-menu-btn')
-const hitBombpoints = 20 
-// const hitWeaponPoints = 40
+const hitBombPoints = 20 
+const hitEnemyPoints = 50
 const introToGameModal = document.querySelector('#intro-to-game-modal')
 const gameOverModal = document.querySelector('#game-over-modal')
-const gameOverAudio = 'assets/game-over.mp3'
-const audio = new Audio(gameOverAudio)
-audio.play()
+// audio
+const gameOverAudio = new Audio('assets/sounds/game-over.mp3')
+const explosionAudio = new Audio('assets/sounds/explosion.mp3')
+const damageAudio = new Audio('assets/sounds/take-a-hit.mp3')
+const backgroundThemeAudio = new Audio('assets/sounds/bartman.mp3')
+const winAudio = new Audio('assets/sounds/winner.mp3')
+const burgerMenuTheme = new Audio('assets/sounds/pause-theme.mp3')
+const hornAudio = new Audio('assets/sounds/horn.mp3')
+const krustyAudio = new Audio('assets/sounds/krusty/mp3')
+const introTheme = new Audio('assets/sounds/I-and-S-Theme.mp3')
+
+// * Local storage high score
+logHighScore()
+
+
+introImg.addEventListener('mouseenter', function() {
+  introTheme.play()
+})
+
+introImg.addEventListener('mouseleave', function() {
+  introTheme.pause()
+})
 
 startBtn.addEventListener('click', function() {
+  hornAudio.play()
   introToGameModal.style.display = 'none'
-  // Theme Song
-  const themeAudio = new Audio('assets/themeSong.mp3')
-  themeAudio.play()
-
+  backgroundThemeAudio.play()
   function replay() {
-    themeAudio.addEventListener('ended', function() {
+    backgroundThemeAudio.addEventListener('ended', function() {
       this.currentTime = 0
       this.play()
     }, false)
-  
   }
-  // ! turned off theme - need it to stop on game over!
-  // replay()
+  replay()
   bombAnimation()
 })
+
+function pauseThemeTune() {
+  backgroundThemeAudio.pause()
+}
+
+function pauseAllAudio() {
+  backgroundThemeAudio.pause()
+  explosionAudio.pause()
+  damageAudio.pause()
+}
 
 function removeGrid() {
   document.querySelector('.game-grid').innerHTML = ''
@@ -195,10 +220,7 @@ function createGrid() {
   addEnemy(currentEnemyPos)
   addEndZone()
   getEnemyLaunchPoint()
-  // don't need, otherwise it overwrites player
-  // addWeapon(currentWeaponPos)
 }
-// createGrid()
 
 function addBombs() {
   bombs.forEach(bomb => {
@@ -218,10 +240,6 @@ function addEndZone() {
   })
 }
 
-// player character
-// -on key or key up, stop and bobbing in place animation /
-// -key down running up and down animation /
-
 // add player
 function addPlayer() {
   cells[currentPlayerPos].classList.add('player')
@@ -238,6 +256,9 @@ function addWeapon(position) {
 function removeWeapon(position) {
   cells[position].classList.remove('weapon')
 }
+// player character
+// -on key or key up, stop and bobbing in place animation /
+// -key down running up and down animation /
 // adds in player running gif
 function addPlayerRun() {
   cells[currentPlayerPos].classList.add('playerRun')
@@ -247,11 +268,11 @@ function removePlayerRun() {
   cells[currentPlayerPos].classList.remove('playerRun')
 }
 
-function addEnemy() {
-  cells[currentEnemyPos].classList.add('enemy')
+function addEnemy(position) {
+  cells[position].classList.add('enemy')
 }
-function removeEnemyRun() {
-  cells[currentEnemyPos].classList.remove('enemy')
+function removeEnemy(position) {
+  cells[position].classList.remove('enemy')
 }
 
 function addEnemyWeapon(position) {
@@ -301,10 +322,8 @@ function bombAnimation() {
     addBombs()
     endBombs()
     winGame()
-    // ! change back to 1000
-  }, 1000)
+  }, 1200)
 }
-// bombAnimation()
 
 // blows bombs up when they reach end point of grid and stops movement
 function endBombs() {
@@ -358,7 +377,6 @@ function playerRun(event) {
   }
 }
 
-// ! launching multiple weapons breaks setInterval trajectory
 function findLaunchPoint(event) {
   const fire = event.code
   let launchPoint
@@ -368,26 +386,31 @@ function findLaunchPoint(event) {
   }
 }
 
+// ! launching multiple weapons means it can't read stop point
 function startWeaponTrajectory(launchPoint) {
   const countAcross = setInterval(() => {
     launchPoint++
     //remove trajectory
-    cells[launchPoint].previousSibling.classList.remove('weapon')
     addWeapon(launchPoint)
+    cells[launchPoint].previousSibling.classList.remove('weapon')
     explosion(launchPoint, countAcross)
-    if (launchPoint === currentWeaponPos + width - 1) {
+    if (cells[launchPoint].classList.contains('enemy') && cells[launchPoint].classList.contains('weapon')) {
+      damageAudio.play()
       clearInterval(countAcross)
       removeWeapon(launchPoint)
-    }
+      pointsCounter.innerText = Number(pointsCounter.innerText) + hitEnemyPoints
+    } else if (launchPoint === currentWeaponPos + width - 1) {
+      clearInterval(countAcross)
+      removeWeapon(launchPoint)
+    } 
   }, 300)
 }
 
-// blows up bombs andremoves/assigns classes to cells
+// blows up bombs and removes/assigns classes to cells
 function explosion(launchPoint, countAcross) {
   if (cells[launchPoint].classList.contains('bomb') && cells[launchPoint].classList.contains('weapon')) {
     clearInterval(countAcross)
     cells[launchPoint].classList.add('kaboom')
-    const explosionAudio = new Audio('assets/explosion.mp3')
     explosionAudio.play()
     cells[launchPoint].classList.add('deadBomb')
     cells[launchPoint].classList.remove('bomb')
@@ -395,7 +418,7 @@ function explosion(launchPoint, countAcross) {
     const findBomb = bombs.find(bomb => bomb === Number(cells[launchPoint].id))
     bombs = bombs.filter(item => item !== findBomb)
     // adds points for hit
-    pointsCounter.innerText = Number(pointsCounter.innerText) + hitBombpoints
+    pointsCounter.innerText = Number(pointsCounter.innerText) + hitBombPoints
     removeWeapon(launchPoint)
     healthProgress.style.flexBasis === '0%'
     // removes explosion gif after 1 second
@@ -404,23 +427,27 @@ function explosion(launchPoint, countAcross) {
     }, 1000)
   }
 }
+
 let randomTime
 function getEnemyLaunchPoint(){
   randomTime = setInterval(() => {
     let enemyLaunchPoint
     const runNumber = Math.floor(Math.random() * height) * width - 1
     if (runNumber > 0) {
+      removeEnemy(currentEnemyPos)
       enemyLaunchPoint = Number(cells[runNumber].id)
+      currentEnemyPos = enemyLaunchPoint
       startEnemyWeapon(enemyLaunchPoint)
+      addEnemy(enemyLaunchPoint)
+      console.log(enemyLaunchPoint)
     }
   }, 4000)
 }
-// getEnemyLaunchPoint()
+
 function startEnemyWeapon(enemyLaunchPoint) {
   const countReturn = setInterval(() => {
     enemyLaunchPoint--
     cells[enemyLaunchPoint].nextSibling.classList.remove('enemy-weapon')
-    // cells[enemyLaunchPoint].nextSibling.style.display = 'none'
     addEnemyWeapon(enemyLaunchPoint)
     playerDamage(enemyLaunchPoint)
     if (cells[enemyLaunchPoint].classList.contains('enemy-weapon') && cells[enemyLaunchPoint].classList.contains('endZone')) {
@@ -430,44 +457,10 @@ function startEnemyWeapon(enemyLaunchPoint) {
   }, 300)
 }
 
-// function weaponOnWeapon(launchPoint, enemyLaunchPoint, countReturn) {
-//   console.log('hit enemy weapon')
-//   pointsCounter.innerText = Number(pointsCounter.innerText) + hitWeaponPoints
-//   clearInterval(countReturn)
-//   removeEnemyWeapon(enemyLaunchPoint)
-//   removeWeapon(launchPoint)
-// }
-
-// let runTime
-// function randomEnemyRun() {
-//   const runNumber = Math.floor(Math.random() * height)
-//   runTime = setInterval(() => {
-//     if (currentEnemyPos >= width) {
-//       currentEnemyPos -= (width * runNumber)
-//     } else if (currentEnemyPos >= width) {
-//       currentEnemyPos += (width * runNumber)
-//     }
-//   }, 400)
-// }
-// randomEnemyRun()
-
-function winGame() {
-  if (bombs.length === 0) {
-    gameOver()
-    document.querySelector('#winning-player').innerHTML += '<h3>You&apos;re a winner!</h3>'
-    clearInterval(bombMovement)
-    clearInterval(randomTime)
-    removeEnemyRun()
-    removeEnemyWeapon()
-    removeWeapon()
-  }
-}
-
 let lostOngoing = 100
 function playerDamage(enemyLaunchPoint) {  
   if (cells[enemyLaunchPoint].classList.contains('player') && cells[enemyLaunchPoint].classList.contains('enemy-weapon')) {
     healthBar.style.animation = 'shake 0.5s'
-    const damageAudio = new Audio('assets/take-a-hit.mp3')
     damageAudio.play()
     const oneHit = 20
     lostOngoing = lostOngoing -= oneHit
@@ -479,53 +472,73 @@ function playerDamage(enemyLaunchPoint) {
 
 function gameOver() {
   closeOverlay()
-  const gameOverAudio = new Audio('assets/game-over.mp3')
-  gameOverAudio.play()
+  pauseAllAudio()
+  clearInterval(bombMovement)
+  clearInterval(randomTime)
+  logHighScore()
   setTimeout(function() {
     gameOverModal.style.display = 'flex'
     modalPointsTotal.innerText = pointsCounter.innerText
+    removeGrid()
   }, 1100)
- 
+  if (bombs.length > 0) {
+    gameOverAudio.play()
+    healthProgress.style.flexBasis = '0%'
+  }
+}
+
+function winGame() {
+  if (bombs.length === 0) {
+    gameOver()
+    document.querySelector('#winning-player').innerHTML += '<h3>You&apos;re a winner!</h3>'
+    winAudio.play()
+  }
 }
 
 function restart() {
   window.location.reload()
 }
 
+// side menu controls - krusty burger menu
 burgerBtn.addEventListener('click', function() {
   document.querySelector('.burger-menu-overlay').style.width = '50%'
-  // clearInterval(bombMovement)
+  pauseThemeTune()
+  burgerMenuTheme.play()
 })
 
 function closeOverlay() {
   document.querySelector('.burger-menu-overlay').style.width = '0%'
-  // bombAnimation()
+  burgerMenuTheme.pause()
+  backgroundThemeAudio.play()
 }
-
 
 // * Events
 
-// start game button
-// -on intro to game modal
-// -on game over modal
-// -resets points to 0
-// -health bar to full (animation on load)
-// -resets bombs
+// start game button /
+// -on intro to game modal /
+// -on game over modal /
+// -resets points to 0 /
+// -health bar to full (animation on load) /
+// -resets bombs /
 // -start at level 1
 // -un-disables pause and reset buttons
-// -character starts in the middle
-// --~start 3,2,1 for player
-// --~enemy character starts in middle
+// -character starts in the middle /
+// --~start 3,2,1 for player X
+// --~enemy character starts in middle /
 
-// ! pause button - nice to have
-// -stops everything in current state - characters, bombs, weapons, disable buttons
-// -pause button becomes unpause/play on button. Change inner text of button.
-// -opens overlay menu?
+// pause button - nice to have X
+// -stops everything in current state - characters, bombs, weapons, disable buttons X
+// -pause button becomes unpause/play on button. Change inner text of button. X
+// -opens overlay menu? /
 
-// restart button
-// -same functions as start button.
+// instructions button /
+// -same as pause button /
+// -pop out burger menu, 1/3 to 1/2 of screen, has same info as intro to game modal /
 
-// key press events
+// restart button /
+// -same functions as start button. /
+
+// key press events /
 // -space bar to fire /
 // -up, down, left, right /
 document.addEventListener('keyup', controlPlayer)
@@ -534,29 +547,25 @@ document.addEventListener('keydown', playerRun)
 playAgainBtn.addEventListener('click', restart)
 refreshBtn.addEventListener('click', restart)
 
-// instructions button /
-// -same as pause button
-// -pop out burger menu, 1/3 to 1/2 of screen, has same info as intro to game modal /
+function logHighScore() {
+  const highScoreLocalStorage = Number(localStorage.getItem('highScore')) || 0
+  if (Number(pointsCounter.innerText) > highScoreLocalStorage) {
+    localStorage.setItem('highScore', pointsCounter.innerText)
+    const localHighScore = localStorage.getItem('highScore')
+  }
+  const updatedHighScore = Number(localStorage.getItem('highScore')) || 0
+  document.querySelector('#high-score-game-over').innerHTML = `High Score<br>${updatedHighScore}`
+  document.querySelector('#high-score-burger').innerHTML = `High Score<br>${updatedHighScore}`
+  document.querySelector('#high-score-intro').innerHTML = `High Score<br>${updatedHighScore}`
+}
 
 // * Page Load
-
 // create grid /
-// ! local storage high scores - nice to have
+// local storage high scores - nice to have /
 // intro to game modal - window event /
 // favicon /
 
-
-localStorage.setItem('highScore', 0)
-if (Number(localStorage.getItem('highScore')) < Number(pointsCounter.innerText)) {
-  localStorage.setItem('highScore', Number(pointsCounter.innerText))
-
-}
-document.querySelector('#high-score-burger').innerHTML = `High Score<br>${localStorage.getItem('highScore')}`
-document.querySelector('#high-score-intro').innerHTML = `High Score<br>${localStorage.getItem('highScore')}`
-
-
 // * Instructions
-
 // Welcome to the Itchy and Scratchy Battle Royale
 // The aim of the game is to destroy as much as Itchy can throw at you before you become Poochie chow
 // For every bomb you destroy you get 20 points

@@ -1,10 +1,3 @@
-/* Options for Google Fonts
--Luckiest Guy
--Bangers
--Slackey
--Oregano
--Satisfy
--Cookie */
 /* font-family: 'Luckiest Guy', cursive; */
 /* font-family: 'Oregano', cursive; */
 
@@ -17,7 +10,7 @@
   --pink: #FD8CC1FF;
   --purple: #370335FF;
   --light-blue: #71D0F5FF;
-  --krusty-green: #1A9993FF
+  --krusty-green: #1A9993FF;
 }
 
 * {
@@ -34,7 +27,7 @@ body {
   margin: 0;
   height: 100vh;
   width: 100vw;
-  background-color: var(--yellow);
+  background-color: var(--purple);
 }
 
 /* to display later */
@@ -129,7 +122,8 @@ body {
 #intro-to-game-modal {
   /* display: none; */
   height: 90vh;
-  width: 500px;
+  min-height: 760px;
+  width: 600px;
 }
 
 #into-to-game-modal-info {
@@ -235,10 +229,10 @@ h4 {
 @keyframes spinBackwards {
   from {
     transform:rotate(0deg);
-}
-to {
+  }
+  to {
     transform:rotate(-360deg);
-}
+  }
 }
 
 @keyframes shake {
@@ -277,7 +271,7 @@ to {
 .high-score {
   color: var(--krusty-green);
   background-color: var(--yellow);
-  padding: 10px 25px;
+  padding: 15px 25px 10px 25px;
   border-radius: 10px;
 }
 
@@ -287,6 +281,11 @@ header {
   flex-direction: column;
   align-items: center;
   justify-content: space-evenly;
+  margin: 0 auto;
+  max-width: 1090px;
+  width: 100vw;
+  background-color: var(--yellow);
+  border-radius: 30px 30px 0 0;
 }
 
 h1 {
@@ -397,10 +396,12 @@ h5 {
 #burger-menu-btn {
   height: 3.5em;
   cursor: pointer;
+  transition: all .2s ease-in-out; 
 }
 
 #burger-menu-btn:hover {
-  opacity: 60%;
+  opacity: 90%;
+  transform: scale(1.1)
 }
 
 #background-image-container {
@@ -415,5 +416,5 @@ h5 {
   bottom: 0;
   left: 50%;
   transform: translate(-50%);
+  border-radius: 0px 0px 30px 30px;
 }
-
