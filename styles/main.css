@@ -50,7 +50,11 @@ body {
   position: relative;
   width: 90%;
   text-align: center;
-  margin: 0 auto;
+  margin: 60px auto 0 auto;
+}
+
+.burger-menu-container h2 {
+  margin: 0 0 20px 0
 }
 
 .burger-menu-overlay .closebtn {
@@ -157,9 +161,6 @@ h4 {
 /* game grid */
 #game-container {
   min-height: 460px;
-  /* display: flex;
-  justify-content: center;
-  align-items: center; */
   position: absolute;
   bottom: 1rem;
   left: 50%;
@@ -169,13 +170,11 @@ h4 {
 }
 
 .game-grid {
-  /* box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2); */
   height: 484px;
   width: 660px;
 }
 
 .game-grid div {
-  /* border: 1px solid lightgrey; */
   display: inline-block;
   background-repeat: no-repeat;
   background-size: contain;
@@ -183,23 +182,22 @@ h4 {
 }
 
 .game-grid div.player {
-  background-image: url('../assets/Scratchy_Stood_blink_gif.gif');
+  background-image: url('../assets/images/Scratchy_Stood_blink_gif.gif');
   background-size: 70%;
 }
 
 .game-grid div.playerRun {
-  background-image: url('../assets/Scratchy_run_gif.gif');
+  background-image: url('../assets/images/Scratchy_run_gif.gif');
   background-size: 130%; 
 }
 
-
 .game-grid div.playerSkeleton {
-  background-image: url('../assets/Scratchy_Game_Over.gif');
+  background-image: url('../assets/images/Scratchy_Game_Over.gif');
   background-size: 70%;
 }
 
 .game-grid div.bomb {
-  background-image: url('../assets/bomb.png');
+  background-image: url('../assets/images/bomb.png');
   background-size: 40%;
   background-position: 50% 30%;
   animation-name: spinBackwards;
@@ -209,7 +207,7 @@ h4 {
 }
 
 .game-grid div.weapon {
-  background-image: url('../assets/mallet.png');
+  background-image: url('../assets/images/mallet.png');
   background-size: 60%;
   animation-name: spin;
   animation-duration: 300ms;
@@ -250,11 +248,11 @@ h4 {
 }
 
 .game-grid div.kaboom {
-  background-image: url('../assets/kaboom.gif');
+  background-image: url('../assets/images/kaboom.gif');
 }
 
 .game-grid div.enemy-weapon {
-  background-image: url('../assets/mallet.png');
+  background-image: url('../assets/images/mallet.png');
   background-size: 30%;
   animation-name: spinBackwards;
   animation-duration: 300ms;
@@ -263,7 +261,7 @@ h4 {
 }
 
 .game-grid div.enemy {
-  background-image: url('../assets/Itchy_run_gif.gif');
+  background-image: url('../assets/images/Itchy_run_gif.gif');
   background-size: 60%;
   background-position: 50% 80%;
 }
@@ -408,7 +406,7 @@ h5 {
   height: 80vh;
   width: 100vw;
   max-width: 1090px;
-  background-image: url('../assets/springfiled_background.png');
+  background-image: url('../assets/images/springfiled_background.png');
   background-repeat: no-repeat;
   background-size: cover;
   background-position: top;

@@ -151,15 +151,19 @@ const hitEnemyPoints = 50
 const introToGameModal = document.querySelector('#intro-to-game-modal')
 const gameOverModal = document.querySelector('#game-over-modal')
 // audio
-const gameOverAudio = new Audio('assets/sounds/game-over.mp3')
 const explosionAudio = new Audio('assets/sounds/explosion.mp3')
-const damageAudio = new Audio('assets/sounds/take-a-hit.mp3')
 const backgroundThemeAudio = new Audio('assets/sounds/bartman.mp3')
-const winAudio = new Audio('assets/sounds/winner.mp3')
 const burgerMenuTheme = new Audio('assets/sounds/pause-theme.mp3')
-const hornAudio = new Audio('assets/sounds/horn.mp3')
-const krustyAudio = new Audio('assets/sounds/krusty/mp3')
+// const krustyAudio = new Audio('assets/sounds/krusty/mp3')
 const introTheme = new Audio('assets/sounds/I-and-S-Theme.mp3')
+const itchyContactLens = new Audio('assets/sounds/Itchy/contact lense.mp3')
+const itchyLetsDoThis = new Audio('assets/sounds/Itchy/lets-do-this.mp3')
+const itchyAI = new Audio('assets/sounds/Itchy/AI.mp3')
+const itchyTrouble = new Audio('assets/sounds/Itchy/trouble.mp3')
+const scratchyConcussion = new Audio('assets/sounds/Scratchy/concussion.mp3')
+const scratchyFeelBad = new Audio('assets/sounds/Scratchy/feel so good.mp3')
+const scratchySlayground = new Audio('assets/sounds/Scratchy/slayground.mp3')
+const scratchyNards = new Audio('assets/sounds/Scratchy/nards.mp3')
 
 // * Local storage high score
 logHighScore()
@@ -174,9 +178,9 @@ introImg.addEventListener('mouseleave', function() {
 })
 
 startBtn.addEventListener('click', function() {
-  hornAudio.play()
   introToGameModal.style.display = 'none'
   backgroundThemeAudio.play()
+  backgroundThemeAudio.volume = 0.2
   function replay() {
     backgroundThemeAudio.addEventListener('ended', function() {
       this.currentTime = 0
@@ -194,7 +198,7 @@ function pauseThemeTune() {
 function pauseAllAudio() {
   backgroundThemeAudio.pause()
   explosionAudio.pause()
-  damageAudio.pause()
+
 }
 
 function removeGrid() {
@@ -218,6 +222,7 @@ function createGrid() {
   }
   addPlayer(currentPlayerPos)
   addEnemy(currentEnemyPos)
+  itchyLetsDoThis.play()
   addEndZone()
   getEnemyLaunchPoint()
 }
@@ -290,7 +295,6 @@ function removeEnemyWeapon(position) {
 let bombMovement
 let direction = 'down'
 function bombAnimation() {
-  // ! put back? does it affeact start/ pause butons?
   createGrid()
   addBombs()
   bombMovement = setInterval(() => {
@@ -332,12 +336,12 @@ function endBombs() {
     if ((cell.classList.contains('endZone') || cell.classList.contains('player')) && cell.classList.contains('bomb')) {
       clearInterval(bombMovement)
       cell.classList.add('kaboom')
-      cell.classList.add('deadBomb')
       cell.classList.remove('bomb')
       // removes explosion gif after 1 second
       setTimeout(function() {
         cell.classList.remove('kaboom')
       }, 1000)
+      itchyAI.play()
       if (cell.classList.contains('player')) {
         cell.classList.add('playerSkeleton')
         cell.classList.remove('player')
@@ -389,17 +393,22 @@ function findLaunchPoint(event) {
 // ! launching multiple weapons means it can't read stop point
 function startWeaponTrajectory(launchPoint) {
   const countAcross = setInterval(() => {
+    // fixes weapon overlap and looping to next row
+    setTimeout(function() {
+      clearInterval(countAcross)
+      removeWeapon(launchPoint)
+    }, 4500)
     launchPoint++
-    //remove trajectory
     addWeapon(launchPoint)
+    //remove trajectory
     cells[launchPoint].previousSibling.classList.remove('weapon')
     explosion(launchPoint, countAcross)
     if (cells[launchPoint].classList.contains('enemy') && cells[launchPoint].classList.contains('weapon')) {
-      damageAudio.play()
+      itchyContactLens.play()
       clearInterval(countAcross)
       removeWeapon(launchPoint)
       pointsCounter.innerText = Number(pointsCounter.innerText) + hitEnemyPoints
-    } else if (launchPoint === currentWeaponPos + width - 1) {
+    } else if ((launchPoint === currentWeaponPos + width - 1) || launchPoint >= cellCount) {
       clearInterval(countAcross)
       removeWeapon(launchPoint)
     } 
@@ -412,7 +421,6 @@ function explosion(launchPoint, countAcross) {
     clearInterval(countAcross)
     cells[launchPoint].classList.add('kaboom')
     explosionAudio.play()
-    cells[launchPoint].classList.add('deadBomb')
     cells[launchPoint].classList.remove('bomb')
     // finds bomb array and deletes exploded bomb from array
     const findBomb = bombs.find(bomb => bomb === Number(cells[launchPoint].id))
@@ -439,7 +447,7 @@ function getEnemyLaunchPoint(){
       currentEnemyPos = enemyLaunchPoint
       startEnemyWeapon(enemyLaunchPoint)
       addEnemy(enemyLaunchPoint)
-      console.log(enemyLaunchPoint)
+      healthBar.style.animation = ''
     }
   }, 4000)
 }
@@ -461,10 +469,16 @@ let lostOngoing = 100
 function playerDamage(enemyLaunchPoint) {  
   if (cells[enemyLaunchPoint].classList.contains('player') && cells[enemyLaunchPoint].classList.contains('enemy-weapon')) {
     healthBar.style.animation = 'shake 0.5s'
-    damageAudio.play()
     const oneHit = 20
     lostOngoing = lostOngoing -= oneHit
     healthProgress.style.flexBasis = `${lostOngoing}%`
+    if (healthProgress.style.flexBasis === '80%') {
+      scratchyConcussion.play()
+    } else if (healthProgress.style.flexBasis === '40%') {
+      scratchyNards.play()
+    } else if (healthProgress.style.flexBasis === '20%') {
+      scratchyFeelBad.play()
+    }
   } else if (healthProgress.style.flexBasis === '0%') {
     gameOver()
   }
@@ -473,17 +487,19 @@ function playerDamage(enemyLaunchPoint) {
 function gameOver() {
   closeOverlay()
   pauseAllAudio()
-  clearInterval(bombMovement)
-  clearInterval(randomTime)
   logHighScore()
+  clearInterval(bombMovement)
   setTimeout(function() {
     gameOverModal.style.display = 'flex'
     modalPointsTotal.innerText = pointsCounter.innerText
     removeGrid()
-  }, 1100)
+  }, 2500)
   if (bombs.length > 0) {
-    gameOverAudio.play()
     healthProgress.style.flexBasis = '0%'
+    setTimeout(function(){
+      itchyTrouble.play()
+    }, 2500)
+
   }
 }
 
@@ -491,7 +507,7 @@ function winGame() {
   if (bombs.length === 0) {
     gameOver()
     document.querySelector('#winning-player').innerHTML += '<h3>You&apos;re a winner!</h3>'
-    winAudio.play()
+    scratchySlayground.play()
   }
 }
 
@@ -510,6 +526,7 @@ function closeOverlay() {
   document.querySelector('.burger-menu-overlay').style.width = '0%'
   burgerMenuTheme.pause()
   backgroundThemeAudio.play()
+  backgroundThemeAudio.volume = 0.5
 }
 
 // * Events
