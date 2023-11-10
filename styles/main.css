@@ -77,8 +77,8 @@ body {
 }
 
 .modal {
-  height: 80vh;
-  width: 400px;
+  height: 90vh;
+  width: 600px;
   position: absolute;
   top: 50%;
   left: 50%;
@@ -124,18 +124,15 @@ body {
 }
 
 #intro-to-game-modal {
-  /* display: none; */
-  height: 90vh;
   min-height: 760px;
-  width: 600px;
 }
 
 #into-to-game-modal-info {
   height: 95%;
 }
 
-#intro-to-game-modal img, .burger-menu-container img {
-  height: 10em;
+#intro-to-game-modal img, .burger-menu-container img, #loseGif, #winGif {
+  height: 10rem;
   margin: 10px;
 }
 

@@ -154,8 +154,8 @@ const gameOverModal = document.querySelector('#game-over-modal')
 const explosionAudio = new Audio('assets/sounds/explosion.mp3')
 const backgroundThemeAudio = new Audio('assets/sounds/bartman.mp3')
 const burgerMenuTheme = new Audio('assets/sounds/pause-theme.mp3')
-// const krustyAudio = new Audio('assets/sounds/krusty/mp3')
 const introTheme = new Audio('assets/sounds/I-and-S-Theme.mp3')
+const winnerTheme = new Audio('assets/sounds/winner.mp3')
 const itchyContactLens = new Audio('assets/sounds/Itchy/contact lense.mp3')
 const itchyLetsDoThis = new Audio('assets/sounds/Itchy/lets-do-this.mp3')
 const itchyAI = new Audio('assets/sounds/Itchy/AI.mp3')
@@ -164,10 +164,10 @@ const scratchyConcussion = new Audio('assets/sounds/Scratchy/concussion.mp3')
 const scratchyFeelBad = new Audio('assets/sounds/Scratchy/feel so good.mp3')
 const scratchySlayground = new Audio('assets/sounds/Scratchy/slayground.mp3')
 const scratchyNards = new Audio('assets/sounds/Scratchy/nards.mp3')
+const scratchyPain = new Audio('assets/sounds/Scratchy/scratchy-pain.mp3')
 
 // * Local storage high score
 logHighScore()
-
 
 introImg.addEventListener('mouseenter', function() {
   introTheme.play()
@@ -180,7 +180,7 @@ introImg.addEventListener('mouseleave', function() {
 startBtn.addEventListener('click', function() {
   introToGameModal.style.display = 'none'
   backgroundThemeAudio.play()
-  backgroundThemeAudio.volume = 0.2
+  backgroundThemeAudio.volume = 0.4
   function replay() {
     backgroundThemeAudio.addEventListener('ended', function() {
       this.currentTime = 0
@@ -282,14 +282,10 @@ function removeEnemy(position) {
 
 function addEnemyWeapon(position) {
   cells[position].classList.add('enemy-weapon')
-  // cells[position].innerHTML += '<img id="enemy-mallet" src="../itchy-and-scratchy-space-invaders/assets/mallet.png" alt="enemy-mallet"></img>'
 }
 
 function removeEnemyWeapon(position) {
   cells[position].classList.remove('enemy-weapon')
-  // cells[position].innerHTML = ''
-  // document.getElementById('enemy-weapon').style.display = 'none'
-
 }
 
 let bombMovement
@@ -405,6 +401,7 @@ function startWeaponTrajectory(launchPoint) {
     explosion(launchPoint, countAcross)
     if (cells[launchPoint].classList.contains('enemy') && cells[launchPoint].classList.contains('weapon')) {
       itchyContactLens.play()
+      cells[launchPoint].style.animation = 'shake 0.5s'
       clearInterval(countAcross)
       removeWeapon(launchPoint)
       pointsCounter.innerText = Number(pointsCounter.innerText) + hitEnemyPoints
@@ -447,6 +444,7 @@ function getEnemyLaunchPoint(){
       currentEnemyPos = enemyLaunchPoint
       startEnemyWeapon(enemyLaunchPoint)
       addEnemy(enemyLaunchPoint)
+      // resets animation for shake to happen again on each hit
       healthBar.style.animation = ''
     }
   }, 4000)
@@ -469,13 +467,16 @@ let lostOngoing = 100
 function playerDamage(enemyLaunchPoint) {  
   if (cells[enemyLaunchPoint].classList.contains('player') && cells[enemyLaunchPoint].classList.contains('enemy-weapon')) {
     healthBar.style.animation = 'shake 0.5s'
+    cells[enemyLaunchPoint].style.animation = 'shake 0.5s'
     const oneHit = 20
     lostOngoing = lostOngoing -= oneHit
     healthProgress.style.flexBasis = `${lostOngoing}%`
     if (healthProgress.style.flexBasis === '80%') {
       scratchyConcussion.play()
-    } else if (healthProgress.style.flexBasis === '40%') {
+    } else if (healthProgress.style.flexBasis === '60%') {
       scratchyNards.play()
+    } else if (healthProgress.style.flexBasis === '40%') {
+      scratchyPain.play()
     } else if (healthProgress.style.flexBasis === '20%') {
       scratchyFeelBad.play()
     }
@@ -499,15 +500,18 @@ function gameOver() {
     setTimeout(function(){
       itchyTrouble.play()
     }, 2500)
-
   }
 }
 
 function winGame() {
   if (bombs.length === 0) {
     gameOver()
+    document.querySelector('#loseGif').style.display = 'none'
     document.querySelector('#winning-player').innerHTML += '<h3>You&apos;re a winner!</h3>'
+    document.querySelector('#winning-player').innerHTML += '<img id="winGif" src="../itchy-and-scratchy-space-invaders/assets/images/win-scratchy.gif" alt="scratchy-win-gif">'
     scratchySlayground.play()
+    winnerTheme.play()
+    winnerTheme.volume = 0.4
   }
 }
 
@@ -526,7 +530,7 @@ function closeOverlay() {
   document.querySelector('.burger-menu-overlay').style.width = '0%'
   burgerMenuTheme.pause()
   backgroundThemeAudio.play()
-  backgroundThemeAudio.volume = 0.5
+  backgroundThemeAudio.volume = 0.4
 }
 
 // * Events
