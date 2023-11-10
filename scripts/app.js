@@ -12,7 +12,7 @@
 // Tuesday - buttons
 // -start button /
 // -reset buttons /
-// -pause buttons
+// -pause buttons X
 // -can log health to bar /
 // -can log points to points /
 
@@ -23,7 +23,7 @@
 
 // Thursday - animation
 // -key frame animations /
-// -nice to have's of enemy character
+// -nice to have's of enemy character /
 
 // * Key Terms
 // bomb = "alien"/"space invader"
@@ -36,11 +36,11 @@
 // restart button /
 // health bar /
 // points /
-// instructions button
+// instructions button /
 
 // weapons /
 // character /
-// enemy character
+// enemy character /
 // bombs /
 
 // * Variables
@@ -81,7 +81,7 @@
 // --~enemy character throw extra bombs at intervals from random locations.  / Can an image pass over a background image
 
 // enemy character (if there's time)
-// -random run up and down and random stops
+// -random run up and down and random stops /
 // - ability to throw bombs at intervals /
 // - could take damage, needs 3 hits, extra points
 
@@ -386,7 +386,6 @@ function findLaunchPoint(event) {
   }
 }
 
-// ! launching multiple weapons means it can't read stop point
 function startWeaponTrajectory(launchPoint) {
   const countAcross = setInterval(() => {
     // fixes weapon overlap and looping to next row
